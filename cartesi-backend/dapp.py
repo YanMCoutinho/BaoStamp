@@ -117,10 +117,10 @@ def insert_sku(input):
     msg_sender = input['msg_sender']
     id = input['data']['production_id']
 
-    if production.get(msg_sender,  -1) == -1 or len(production[msg_sender]) < id:
+    if  id < 0 or len(production.get(msg_sender,  [])) <= 0 or len(production[msg_sender]) < id:
         msg = f"Production id {id} searched by {msg_sender} was not found."
-        send_notice({"payload": str2hex(msg)})
-        return "reject"    
+        send_report({"payload": str2hex(msg)})
+        raise ValueError(msg)
     
     if skus.get(msg_sender, 0) == 0:
         skus[msg_sender] = {id: []}
