@@ -81,46 +81,86 @@ payload
         "desc": ""
         }
     ],
-    "components": [
-        {
-        "name": "Corante Anilina",
-        "step": 6,
-        "desc": "paia"
+    "active": true
+  }
+}'
+
+// 1: route data input
+'
+{
+    "production_id": 1,
+    "components": {
+        "item_name": {
+            "steps": 6,
+            "qtd": 1
         }
-    ]
     }
 }
 '
 
-JSON descriptions
-type
-0 = insert product
-1 = insert production
-2 = insert new sku (product)
-
 """
 
-products = {}
+production = {}
+skus = {}
+users = []
 
-def insert_product(input):
+def insert_production(input):
     msg_sender = input['msg_sender']
-    if products.get(msg_sender, 0) == 0:
-        products[msg_sender] = []
-    products[msg_sender].append(input['data'])
-    logger.info(f"Array {products[msg_sender]}")
+    if production.get(msg_sender, 0) == 0:
+        production[msg_sender] = []
+        users.append(msg_sender)
+    production[msg_sender].append(input['data'])
+    msg = f"Production {input['data']['product_name']} inserted by {msg_sender}. Production id {len(production[msg_sender]) - 1}"
+    send_notice({"payload": str2hex(msg)})
+
+def insert_sku(input):
+    msg_sender = input['msg_sender']
+    id = input['data']['production_id']
+
+    if production.get(msg_sender,  -1) == -1 or len(production[msg_sender]) < id:
+        msg = f"Production id {id} searched by {msg_sender} was not found."
+        send_notice({"payload": str2hex(msg)})
+        return "reject"    
+    
+    if skus.get(msg_sender, 0) == 0:
+        skus[msg_sender] = {id: []}
+    elif skus[msg_sender].get(id, 0) == 0:
+        skus[msg_sender][id] = []
+    
+    skus[msg_sender][id].append(input['data'])
+    send_notice({"payload": str2hex(f"SKU {input['data']} inserted by {msg_sender}")})
+    logger.info(f"Inserting sku {input['data']} for production id {id} by {msg_sender}")
 
 #routes by type
-routes = {
-    0: insert_product
+advance_routes = {
+    0: insert_production,
+    1: insert_sku
 }
+
+def cast_input_json(received_json):
+    """
+    JSON descriptions
+    type
+    0 = insert production
+    1 = insert new sku (product)
+
+    """
+    desired_json = {
+        "type": received_json.get("type", -1),
+        "data": received_json.get("data", {})
+        }
+    return desired_json
+
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
     try:
         input = hex2str(data["payload"])
         input_json = json.loads(format(input))
-        print(type(input_json))
+        input_json = cast_input_json(input_json)
+
+        #call the function in the route
         input_json['msg_sender'] = data['metadata']['msg_sender']
-        handler_function = routes[input_json['type']]
+        handler_function = advance_routes[input_json['type']]
         handler_function(input_json)        
 
     except Exception as e:
