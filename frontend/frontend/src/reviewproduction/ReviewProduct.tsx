@@ -6,6 +6,7 @@ const ReviewProduction = () => {
   const navigate = useNavigate();
   const { productionSteps, numberOfSKUs } = location.state;
 
+  // Enviar solicitação de verificação backend
   const handleVerificationRequest = () => {
     console.log("Requesting verification and issuance of the seal:", { productionSteps, numberOfSKUs });
     alert("Verification requested!");

@@ -14,10 +14,12 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from "./App";
 import Intro from "../src/intro/Intro";
+import SetPerfil from "../src/setperfil/Setperfil";  
 import RegisterProduct from "../src/registerproduct/RegisterProduct";
 import Addbatch from "../src/addbatch/Addbatch";
 import ReviewProduction from "../src/reviewproduction/ReviewProduct";
 import reportWebVitals from "./reportWebVitals";
+import Company from "../src/company/Company";
 
 import { createRoot } from 'react-dom/client';
 const container = document.getElementById('root');
@@ -28,10 +30,12 @@ root.render(
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Intro />} />
+                <Route path="/setperfil" element={<SetPerfil />} />
                 <Route path="/App" element={<App />} />
                 <Route path="/registerproduct" element={<RegisterProduct />} />
                 <Route path="/review-production" element={<ReviewProduction />} />
                 <Route path="/addbatch" element={<Addbatch />} />
+                <Route path="/company" element={<Company />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>

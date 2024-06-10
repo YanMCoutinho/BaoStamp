@@ -1,0 +1,87 @@
+@import '../style/global.scss';
+
+.intro-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('../assets/back.png') no-repeat center center;
+    background-size: cover;
+    color: var(--text);
+    position: relative;
+
+    .content-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 70%;
+        height: 60vh;
+        background-color: rgba(255, 255, 255, 0.321);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        @include respond-to(small) {
+            flex-direction: column;
+            width: 90%;
+        }
+
+        .text-section {
+            flex: 1;
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+
+            h1 {
+                font-size: 2.5rem;
+                color: var(--primary);
+            }
+
+            p {
+                font-size: 1rem;
+                color: var(--text-opaco);
+            }
+
+            button {
+                margin-top: 20px;
+                padding: 10px 20px;
+                font-size: 1rem;
+                font-weight: bold;
+                color: var(--white-fixed);
+                background-color: var(--primary);
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+
+                &:hover {
+                    background-color: var(--primary);
+                }
+            }
+        }
+
+        .image-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .floating-image {
+                width: 80%; // Ajuste o tamanho conforme necessário
+                animation: float 3s ease-in-out infinite;
+            }
+        }
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}

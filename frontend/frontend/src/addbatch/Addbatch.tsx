@@ -1,6 +1,4 @@
-
 import './style.scss';
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,82 +61,109 @@ export default function AddBatch() {
             <h2>Add Production Steps</h2>
             {productionSteps.map((step, index) => (
                 <div key={step.id} className="production-step">
-                    <h3>Step {step.id}: {step.stage}</h3>
-                    <p>Stage Name:</p>
-                    <select
-                        value={step.stage}
-                        onChange={(e) => handleInputChange(index, 'stage', e.target.value)}
-                    >
-                        <option value="">Select Stage Name</option>
-                        <option value="Harvest">Harvest</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Spinning">Spinning</option>
-                        <option value="Weaving">Weaving</option>
-                        <option value="Dyeing">Dyeing</option>
-                        <option value="Cutting and Sewing">Cutting and Sewing</option>
-                    </select>
-                    <p>Process:</p>
-                    <input
-                        type="text"
-                        placeholder="Process"
-                        value={step.process}
-                        onChange={(e) => handleInputChange(index, 'process', e.target.value)}
-                    />
-                    <p>Continent:</p>
-                    <select
-                        value={step.continent}
-                        onChange={(e) => handleInputChange(index, 'continent', e.target.value)}
-                    >
-                        <option value="">Select Continent</option>
-                        <option value="America">America</option>
-                        <option value="Africa">Africa</option>
-                        <option value="Europe">Europe</option>
-                        <option value="Asia">Asia</option>
-                        <option value="Oceania">Oceania</option>
-                        <option value="Antarctica">Antarctica</option>
-                    </select>
-                    <p>Input Products:</p>
-                    <input
-                        type="text"
-                        placeholder="e.g., Cotton, Polyester"
-                        value={step.inputProducts}
-                        onChange={(e) => handleInputChange(index, 'inputProducts', e.target.value)}
-                    />
-                    <p>Output Products:</p>
-                    <input
-                        type="text"
-                        placeholder="e.g., Cotton, Polyester"
-                        value={step.outputProducts}
-                        onChange={(e) => handleInputChange(index, 'outputProducts', e.target.value)}
-                    />
-                    <p>Start Date:</p>
-                    <input
-                        type="date"
-                        value={step.startDate}
-                        onChange={(e) => handleInputChange(index, 'startDate', e.target.value)}
-                    />
-                    <p>End Date:</p>
-                    <input
-                        type="date"
-                        value={step.endDate}
-                        onChange={(e) => handleInputChange(index, 'endDate', e.target.value)}
-                    />
-                    <p>Brief Description of the Process:</p>
-                    <textarea
-                        placeholder="Brief Description of the Process"
-                        value={step.briefDescription}
-                        onChange={(e) => handleInputChange(index, 'briefDescription', e.target.value)}
-                    />
+                    <h3>Step {step.id}</h3>
+                    <div className="form-group">
+                        <label htmlFor={`stage-${step.id}`}>Stage Name:</label>
+                        <select
+                            id={`stage-${step.id}`}
+                            value={step.stage}
+                            onChange={(e) => handleInputChange(index, 'stage', e.target.value)}
+                        >
+                            <option value="">Select the stage of production</option>
+                            <option value="Harvest">Harvest</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Spinning">Spinning</option>
+                            <option value="Weaving">Weaving</option>
+                            <option value="Dyeing">Dyeing</option>
+                            <option value="Cutting and Sewing">Cutting and Sewing</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`process-${step.id}`}>Process Description:</label>
+                        <input
+                            type="text"
+                            id={`process-${step.id}`}
+                            placeholder="Describe the process involved"
+                            value={step.process}
+                            onChange={(e) => handleInputChange(index, 'process', e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`continent-${step.id}`}>Continent of Production:</label>
+                        <select
+                            id={`continent-${step.id}`}
+                            value={step.continent}
+                            onChange={(e) => handleInputChange(index, 'continent', e.target.value)}
+                        >
+                            <option value="">Select the continent where production occurs</option>
+                            <option value="America">America</option>
+                            <option value="Africa">Africa</option>
+                            <option value="Europe">Europe</option>
+                            <option value="Asia">Asia</option>
+                            <option value="Oceania">Oceania</option>
+                            <option value="Antarctica">Antarctica</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`input-products-${step.id}`}>Input Products:</label>
+                        <input
+                            type="text"
+                            id={`input-products-${step.id}`}
+                            placeholder="Enter the input products (e.g., Cotton, Polyester)"
+                            value={step.inputProducts}
+                            onChange={(e) => handleInputChange(index, 'inputProducts', e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`output-products-${step.id}`}>Output Products:</label>
+                        <input
+                            type="text"
+                            id={`output-products-${step.id}`}
+                            placeholder="Enter the output products (e.g., Fabric, Yarn)"
+                            value={step.outputProducts}
+                            onChange={(e) => handleInputChange(index, 'outputProducts', e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`start-date-${step.id}`}>Start Date:</label>
+                        <input
+                            type="date"
+                            id={`start-date-${step.id}`}
+                            value={step.startDate}
+                            onChange={(e) => handleInputChange(index, 'startDate', e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`end-date-${step.id}`}>End Date:</label>
+                        <input
+                            type="date"
+                            id={`end-date-${step.id}`}
+                            value={step.endDate}
+                            onChange={(e) => handleInputChange(index, 'endDate', e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`brief-description-${step.id}`}>Brief Description of the Process:</label>
+                        <textarea
+                            id={`brief-description-${step.id}`}
+                            placeholder="Provide a brief description of the process"
+                            value={step.briefDescription}
+                            onChange={(e) => handleInputChange(index, 'briefDescription', e.target.value)}
+                        />
+                    </div>
                 </div>
             ))}
             <div className="batch-details">
-                <p>Number of SKUs:</p>
-                <input
-                    type="number"
-                    placeholder="Number of SKUs"
-                    value={numberOfSKUs.toString()}
-                    onChange={(e) => setNumberOfSKUs(parseInt(e.target.value) || 0)}
-                />
+                <div className="form-group">
+                    <label htmlFor="number-of-skus">Number of SKUs:</label>
+                    <input
+                        type="number"
+                        id="number-of-skus"
+                        placeholder="Enter the number of SKUs"
+                        value={numberOfSKUs.toString()}
+                        onChange={(e) => setNumberOfSKUs(parseInt(e.target.value) || 0)}
+                    />
+                </div>
             </div>
             <div className="buttons_final">
                 <button onClick={handleAddStep}>Add Step</button>
