@@ -10,22 +10,31 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-import React from "react"
+import React from "react";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from "./App";
-import Test from "./test/Test";
+import Intro from "../src/intro/Intro";
+import RegisterProduct from "../src/registerproduct/RegisterProduct";
+import Addbatch from "../src/addbatch/Addbatch";
+import ReviewProduction from "../src/reviewproduction/ReviewProduct";
 import reportWebVitals from "./reportWebVitals";
 
 import { createRoot } from 'react-dom/client';
 const container = document.getElementById('root');
-const root = createRoot(container!); 
+const root = createRoot(container!);
+
 root.render(
     <React.StrictMode>
-        <App />
-        <Test />
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Intro />} />
+                <Route path="/App" element={<App />} />
+                <Route path="/registerproduct" element={<RegisterProduct />} />
+                <Route path="/review-production" element={<ReviewProduction />} />
+                <Route path="/addbatch" element={<Addbatch />} />
+            </Routes>
+        </BrowserRouter>
     </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

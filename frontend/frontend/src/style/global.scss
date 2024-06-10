@@ -1,0 +1,92 @@
+:root {
+    --primary: #8B00FF;
+    --background: #FFFFFF;
+    --text: #525252; 
+    --text-opaco: #00000076;
+    --caption: #717171; 
+    --gray: #E1E1E6;
+    --background-light: #E5E5E5; 
+    --sidebar: #373746;
+    --white-fixed: #ffffff;
+    --red: #ff0000;
+    --orange: #c86418;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+button {
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+p {
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+/*==== Scroll Personalizado ====
+::-webkit-scrollbar{
+	width: .5vw;
+    background: var(--background);
+}
+
+::-webkit-scrollbar-thumb{
+	background: linear-gradient(var(--background), var(--primary), var(--background));
+	border-radius: 10px;
+	transition: .6s ease-in;
+}
+*/
+
+// Define os tamanhos dos breakpoints
+$breakpoints: (
+    small: 480px,
+    medium: 800px,
+    large: 1024px
+);
+
+@mixin respond-to($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        $max-width: map-get($breakpoints, $breakpoint);
+
+        @media (max-width: $max-width) {
+            @content;
+        }
+    }
+
+    @else {
+        @error "O breakpoint '#{$breakpoint}' não está definido!";
+    }
+}
