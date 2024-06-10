@@ -1,0 +1,72 @@
+.add-batch-container {
+    padding: 20px;
+    border-radius: 8px;
+
+    h2 {
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .production-step {
+        border: 1px solid var(--gray);
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+
+        h3 {
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        p{
+            margin-bottom: 0.5rem;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+
+            &:focus {
+                border-color: var(--primary);
+                outline: none;
+            }
+        }
+
+        select {
+            background-color: var(--background);
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--background-light);
+            }
+        }
+
+        textarea {
+            height: 100px;
+        }
+    }
+
+    .buttons_final {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    button {
+        background-color: var(--primary);
+        color: var(--white-fixed);
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--primary);
+        }
+    }
+}
