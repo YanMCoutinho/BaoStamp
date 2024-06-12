@@ -3,11 +3,11 @@ import requests
 import logging
 import traceback
 import json
-import erc721.json as erc721_json
+
+erc721_json = json.load(open("erc721.json"))
 
 
-
-ERC721_CONTRACT_ADDRESS = erc721_json["address"]
+ERC721_CONTRACT_ADDRESS = erc721_json["address"].lower()
 
 abi = erc721_json["abi"]
 
@@ -31,6 +31,7 @@ def hex2str(hex):
     return bytes.fromhex(hex[2:]).decode("utf-8")
 
 
+
 def str2hex(str):
     """
     Encodes a string as a hex string
@@ -40,9 +41,21 @@ def str2hex(str):
 def send_notice(notice: str) -> None:
     send_post("notice", notice)
 
+def dict2hex(dict):
+    """
+    Encodes a dictionary as a hex string
+    """
+    return str2hex(json.dumps(dict))
 
-def send_report(report: str) -> None:
-    send_post("report", report)
+def send_report(report: dict) -> None:
+    try:
+        # Convert the report dictionary to a JSON string and then to a hex string
+        report_hex = str2hex(json.dumps(report))
+        response = requests.post(rollup_server + "/report", json={"payload": report_hex})
+        logger.info(f"Received response status {response.status_code} body {response.content}")
+    except Exception as e:
+        logger.error(f"Error sending report {report} {e}")
+
 
 def send_post(endpoint, json_data) -> None:
     response = requests.post(rollup_server + f"/{endpoint}", json=json_data)
@@ -111,6 +124,13 @@ payload
 
 """
 
+def compare_sku_production(production):
+    """
+    Compares the production and sku data
+    """
+    product = production['product_name']
+    
+
 production = {}
 skus = {}
 users = []
@@ -124,30 +144,76 @@ def insert_production(input):
     msg = f"Production {input['data']['product_name']} inserted by {msg_sender}. Production id {len(production[msg_sender]) - 1}"
     send_notice({"payload": str2hex(msg)})
 
-def insert_sku(input):
-    msg_sender = input['msg_sender']
-    id = input['data']['production_id']
+def inspect_users(data):
+    logger.info(f"Users: {users}")
+    return users
+"""
 
-    if  id < 0 or len(production.get(msg_sender,  [])) <= 0 or len(production[msg_sender]) < id:
-        msg = f"Production id {id} searched by {msg_sender} was not found."
-        send_report({"payload": str2hex(msg)})
-        raise ValueError(msg)
+{'type': 1, 'data': {'id': 1, 'name': 'roupa incrivel da piet', 'description': 'Essa roupa da piet é a mais incrivel de todas as roupas da piet', 'components': ['algodao', 'nylon']}, 'msg_sender': '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'}
+"""
+def insert_sku(input):
+    logger.info(f"Inserting sku ....... {input}")
+    msg_sender = input["msg_sender"]
+    sku_data = input["data"]
+
+    logger.info(f"User {msg_sender} have that skus: {skus.get(msg_sender, {})}")
     
-    if skus.get(msg_sender, 0) == 0:
-        skus[msg_sender] = {id: []}
-    elif skus[msg_sender].get(id, 0) == 0:
-        skus[msg_sender][id] = []
+    if msg_sender not in skus:
+        skus[msg_sender] = {}
     
-    skus[msg_sender][id].append(input['data'])
-    send_notice({"payload": str2hex(f"SKU {input['data']} inserted by {msg_sender}")})
-    logger.info(f"Inserting sku {input['data']} for production id {id} by {msg_sender}")
+    skus[msg_sender][sku_data["id"]] = sku_data
+    msg = f"SKU {sku_data['name']} inserted by {msg_sender}. SKU id {sku_data['id']}"
+    
+    logger.info(f"Now user {msg_sender} have that skus: {skus.get(msg_sender, {})}")
+    send_notice({"payload": str2hex(msg)})
+    
+    
+
+def get_skus(msg_sender):
+    
+    try:
+        skus_list = skus.get(msg_sender, {})
+        logger.info(f"Getting skus for user {msg_sender}:  {skus_list}")
+        send_report({"payload": skus_list})
+    except Exception as e:
+        logger.error(f"Error sending report of the insert sku {e}")
+  
+def mint_nft(input):
+    global last_token_id
+    token_id = get_next_token_id()
+    sender = input["msg_sender"]
+    status = input["data"]["status"]
+    metadata = input["data"]["metadata"]
+    
+    logger.info(f"Minting NFT with token_id {token_id} for sender {sender}")
+    token_uri = ""
+    
+    if status == "accept":
+        token_uri = f"https://fastly.picsum.photos/id/119/200/200.jpg?hmac=JGrHG7yCKfebsm5jJSWw7F7x2oxeYnm5YE_74PhnRME"
+    else:
+        token_uri = f"https://fastly.picsum.photos/id/62/200/200.jpg?hmac=IdjAu94sGce82DBYTMbOYzXr7kup1tYqdr0bHkRDWUs"
+        
+    #metadata is a json
+    metadata = {
+        "to": sender,
+        "token_id": token_id,
+        "token_uri": token_uri,
+        "metadata": metadata
+    }
+    
+    logger.info(f"Metadata for token_id {token_id} is {metadata}")
 
 #routes by type
 advance_routes = {
     0: insert_production,
-    1: insert_sku
+    1: insert_sku,
+    3: mint_nft
 }
 
+inspect_routes = {
+    0: get_skus,
+    1: inspect_users
+}
 def cast_input_json(received_json):
     """
     JSON descriptions
@@ -172,13 +238,15 @@ def handle_advance(data):
         #call the function in the route
         input_json['msg_sender'] = data['metadata']['msg_sender']
         handler_function = advance_routes[input_json['type']]
-        handler_function(input_json)        
+        logger.info(f"Handle Advance: Calling handler function {handler_function} with input {input_json}")
+        handler_function(input_json)
 
     except Exception as e:
         msg = f"Error {e} processing data {data}"
         logger.error(f"{msg}\n{traceback.format_exc()}")
         send_report({"payload": str2hex(msg)})
         return "reject"
+
 
 def json2hex(jsons):
     """
@@ -187,76 +255,30 @@ def json2hex(jsons):
     return str2hex(json.dumps(jsons))
 
 
-def send_voucher(voucher):
-    """
-    Sends a voucher to the rollup server
-    """
-    response = requests.post(rollup_server + "/voucher", json=voucher)
-    logger.info(f"Received response status {response.status_code}, {response.text}, {response.json()}")
-    if response.status_code == 201:
-        logger.info("Voucher sent successfully")
-        return True
-
+def send_nf_token():
+    pass
 
 def get_next_token_id():
     global last_token_id
     last_token_id += 1
     return last_token_id
 
-
-def mint_nft(sender, metadata,  status):
-    global last_token_id
-    token_id = get_next_token_id()
-    
-    logger.info(f"Minting NFT with token_id {token_id} for sender {sender}")
-    token_uri = ""
-    
-    if status == "accept":
-        token_uri = f"https://fastly.picsum.photos/id/119/200/200.jpg?hmac=JGrHG7yCKfebsm5jJSWw7F7x2oxeYnm5YE_74PhnRME"
-    else:
-        token_uri = f"https://fastly.picsum.photos/id/62/200/200.jpg?hmac=IdjAu94sGce82DBYTMbOYzXr7kup1tYqdr0bHkRDWUs"
-        
-    #metadata is a json
-    metadata = {
-        "to": sender,
-        "token_id": token_id,
-        "token_uri": token_uri,
-        "metadata": metadata
-    }
-    
-    execution_function_encoded = abi.encode_function_call("depositERC721Token", [ERC721_CONTRACT_ADDRESS, sender, token_id, json2hex(metadata), ""])
-    
-    send_voucher({
-        "execution": execution_function_encoded,
-        "metadata": metadata
-    })
-    
-    
-    
-    
-    
-
-def handle_advance(data):
-    logger.info(f"Received advance request data {data}")
-    input = hex2str(data["payload"])
-    input = json.loads(input)
-    
-    if input["create_nft"] == "yes":
-        metadata = {
-            "fluxo do sku": ["sku1", "sku2", "sku3"],
-            "resultado do modelo": 0,
-            "resumo do produto": {
-                "nome": "produto",
-                "descricao": "descricao",
-                "preco": 100
-            }
-        }
-        mint_nft(data["metadata"]["msg_sender"].lower(), metadata, "accept")
-    return "accept"
-
-
 def handle_inspect(data):
-    logger.info(f"Received inspect request data {data}")
+    route = hex2str(data["payload"])
+    
+    #pegar o que estiver dps de get_skus-
+    if route.split("-")[0] == "get_skus":
+        newRoute = route.split("-")[0]
+        msg_sender = route.split("-")[1]
+        logger.info(f"Route {newRoute} and msg_sender {msg_sender}")
+        handler = inspect_routes[classify(newRoute)]
+        handler(msg_sender)
+    else:
+        logger.info(f"Route {route}")
+        handler = inspect_routes[classify(route)]
+        handler(data)
+    
+    logger.info(f"Received inspect request data {data}, at payload {route}")
     return "accept"
 
 
@@ -272,12 +294,16 @@ finish = {"status": "accept"}
 
 while True:
     logger.info("Sending finish")
-    response = requests.post(rollup_server + "/finish", json=finish)
-    logger.info(f"Received finish status {response.status_code}")
-    if response.status_code == 202:
-        logger.info("No pending rollup request, trying again")
-    else:
-        rollup_request = response.json()
-        data = rollup_request["data"]
-        handler = handlers[rollup_request["request_type"]]
-        finish["status"] = handler(rollup_request["data"])
+    try:
+        response = requests.post(rollup_server + "/finish", json=finish)
+        logger.info(f"Received finish status {response.status_code}")
+        if response.status_code == 202:
+            logger.info("No pending rollup request, trying again")
+        else:
+            rollup_request = response.json()
+            data = rollup_request["data"]
+            handler = handlers[rollup_request["request_type"]]
+            finish["status"] = handler(rollup_request["data"])
+    except Exception as e:
+        logger.error(f"Error sending finish {e}")
+        break
