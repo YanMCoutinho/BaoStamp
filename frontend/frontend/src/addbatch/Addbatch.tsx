@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 interface ProductionStep {
     id: number;
     stage: string;
-    process: string;
     continent: string;
     inputProducts: string;
     outputProducts: string;
     startDate: string;
     endDate: string;
     briefDescription: string;
+    waterUsage: string;
+    energyUsage: string;
 }
 
 interface Batch {
@@ -29,13 +30,14 @@ export default function AddBatch() {
             setProductionSteps([...productionSteps, {
                 id: productionSteps.length + 1,
                 stage: '',
-                process: '',
                 continent: '',
                 inputProducts: '',
                 outputProducts: '',
                 startDate: '',
                 endDate: '',
-                briefDescription: ''
+                briefDescription: '',
+                waterUsage: '',
+                energyUsage: ''
             }]);
         } else {
             alert('Maximum of 6 production steps can be added.');
@@ -59,6 +61,8 @@ export default function AddBatch() {
     return (
         <div className="add-batch-container">
             <h2>Add Production Steps</h2>
+            <p>Welcome to our batch registration system. Here you can efficiently document each step of your product's journey, ensuring transparency and traceability. This process not only enhances your brand's credibility but also aligns with modern sustainability practices.</p>
+
             {productionSteps.map((step, index) => (
                 <div key={step.id} className="production-step">
                     <h3>Step {step.id}</h3>
@@ -77,16 +81,6 @@ export default function AddBatch() {
                             <option value="Dyeing">Dyeing</option>
                             <option value="Cutting and Sewing">Cutting and Sewing</option>
                         </select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor={`process-${step.id}`}>Process Description:</label>
-                        <input
-                            type="text"
-                            id={`process-${step.id}`}
-                            placeholder="Describe the process involved"
-                            value={step.process}
-                            onChange={(e) => handleInputChange(index, 'process', e.target.value)}
-                        />
                     </div>
                     <div className="form-group">
                         <label htmlFor={`continent-${step.id}`}>Continent of Production:</label>
@@ -151,6 +145,26 @@ export default function AddBatch() {
                             onChange={(e) => handleInputChange(index, 'briefDescription', e.target.value)}
                         />
                     </div>
+                    <div className="form-group">
+                        <label htmlFor={`water-usage-${step.id}`}>Water Usage (liters):</label>
+                        <input
+                            type="number"
+                            id={`water-usage-${step.id}`}
+                            placeholder="Enter the amount of water used"
+                            value={step.waterUsage}
+                            onChange={(e) => handleInputChange(index, 'waterUsage', e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor={`energy-usage-${step.id}`}>Energy Usage (kWh):</label>
+                        <input
+                            type="number"
+                            id={`energy-usage-${step.id}`}
+                            placeholder="Enter the amount of energy used"
+                            value={step.energyUsage}
+                            onChange={(e) => handleInputChange(index, 'energyUsage', e.target.value)}
+                        />
+                    </div>
                 </div>
             ))}
             <div className="batch-details">
@@ -170,6 +184,9 @@ export default function AddBatch() {
                 {productionSteps.length > 0 && (
                     <button onClick={handleContinue} className="continue">Continue</button>
                 )}
+            </div>
+            <div className="final-notes">
+                <p>After submitting the production details, our system will review the information. If approved, NFTs representing each SKU will be issued along with a BaoStamp certification, enhancing your product's transparency and trustworthiness.</p>
             </div>
         </div>
     );
