@@ -14,32 +14,37 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from "./App";
 import Intro from "../src/intro/Intro";
-import SetPerfil from "../src/setperfil/Setperfil";  
+import SetPerfil from "../src/setperfil/Setperfil";
 import RegisterProduct from "../src/registerproduct/RegisterProduct";
 import Addbatch from "../src/addbatch/Addbatch";
 import ReviewProduction from "../src/reviewproduction/ReviewProduct";
 import reportWebVitals from "./reportWebVitals";
 import Company from "../src/company/Company";
+import { WalletProvider } from "./WalletContext";
 
 import { createRoot } from 'react-dom/client';
 import SKU from "./sku/SKU";
 const container = document.getElementById('root');
 const root = createRoot(container!);
 
+const dappAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Intro />} />
-                <Route path="/setperfil" element={<SetPerfil />} />
-                <Route path="/App" element={<App />} />
-                <Route path="/registerproduct" element={<RegisterProduct />} />
-                <Route path="/review-production" element={<ReviewProduction />} />
-                <Route path="/addbatch" element={<Addbatch />} />
-                <Route path="/company" element={<Company />} />
-                <Route path="/consult-sku" element={<SKU />} />
-            </Routes>
-        </BrowserRouter>
+        <WalletProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Intro />} />
+                    <Route path="/setperfil" element={<SetPerfil />} />
+                    <Route path="/App" element={<App />} />
+                    <Route path="/registerproduct" element={<RegisterProduct dappAddress={dappAddress} />} />
+                    <Route path="/review-production" element={<ReviewProduction />} />
+                    <Route path="/addbatch" element={<Addbatch />} />
+                    <Route path="/company" element={<Company />} />
+                    <Route path="/consult-sku" element={<SKU />} />
+                </Routes>
+            </BrowserRouter>
+        </WalletProvider>
     </React.StrictMode>
 );
 

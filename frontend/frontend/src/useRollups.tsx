@@ -76,6 +76,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
 
             let inputBoxAddress = "";
             if(config[chain.id]?.InputBoxAddress) {
+                console.log(config[chain.id].InputBoxAddress);
                 inputBoxAddress = config[chain.id].InputBoxAddress;
             } else {
                 console.error(`No input box address address defined for chain ${chain.id}`);
