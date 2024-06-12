@@ -1,20 +1,33 @@
 @import '../style/global.scss';
 
 .register-product-container {
+    margin: auto;
+    margin-top: 4rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 40px;
     background-color: var(--background);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     max-width: 800px;
-    margin: 0 auto;
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
 
     h2 {
-        font-size: 2rem;
+        font-size: 2.5rem;
         color: var(--primary);
-        margin-bottom: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.05);
+        }
     }
 
     form {
@@ -24,34 +37,38 @@
 
         .form-group {
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
 
             label {
-                display: block;
-                font-size: 1rem;
-                color: var(--text);
+                font-size: 1.1rem;
+                color: var(--text-dark);
                 margin-bottom: 8px;
             }
 
             input,
             select {
                 width: 100%;
-                padding: 10px;
+                padding: 12px;
                 border: 1px solid var(--gray);
                 border-radius: 5px;
                 font-size: 1rem;
                 color: var(--text);
                 background-color: var(--white-fixed);
                 box-sizing: border-box;
-                transition: border-color 0.3s ease;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
                 &:focus {
                     border-color: var(--primary);
+                    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
                     outline: none;
                 }
             }
 
             select {
-                height: 100px;
+                height: auto;
+                padding-right: 10px;
+                /* Ajuste para garantir que todo o texto seja visível */
             }
         }
 
@@ -62,20 +79,22 @@
 
             input {
                 flex: 1;
-                padding: 10px;
+                padding: 12px;
                 border: 1px solid var(--gray);
                 border-radius: 5px;
                 font-size: 1rem;
                 margin-right: 10px;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
                 &:focus {
                     border-color: var(--primary);
+                    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
                     outline: none;
                 }
             }
 
             button {
-                padding: 10px 20px;
+                padding: 12px 20px;
                 font-size: 1rem;
                 font-weight: bold;
                 color: var(--white-fixed);
@@ -83,10 +102,12 @@
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
-                transition: background-color 0.3s ease;
+                transition: background-color 0.3s ease, transform 0.3s ease;
 
                 &:hover {
-                    background-color: var(--primary);
+                    background-color: var(--caption);
+                    transform: translateY(-3px);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 }
             }
         }
@@ -98,6 +119,8 @@
                 font-size: 1.5rem;
                 color: var(--primary);
                 margin-bottom: 10px;
+                text-align: center;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
             }
 
             ul {
@@ -112,12 +135,18 @@
                     padding: 10px;
                     border-radius: 5px;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+                    &:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    }
                 }
             }
         }
 
         .submit-button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 1rem;
             font-weight: bold;
             color: var(--white-fixed);
@@ -125,10 +154,12 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.3s ease;
 
             &:hover {
-                background-color: var(--primary);
+                background-color: var(--caption);
+                transform: translateY(-3px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
         }
     }
