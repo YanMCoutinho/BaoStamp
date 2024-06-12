@@ -44,6 +44,7 @@ const Company = () => {
     return (
         <div className="company-container">
             <h1>{`${companyName} Dashboard`}</h1>
+            <p>This is a dashboard for adding products and visualizing the flow of product batches within the company.</p>
             {!isConnected ? (
                 <div className="connect-button">
                     <Network />
