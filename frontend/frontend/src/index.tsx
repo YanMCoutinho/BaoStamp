@@ -20,8 +20,11 @@ import Addbatch from "../src/addbatch/Addbatch";
 import ReviewProduction from "../src/reviewproduction/ReviewProduct";
 import reportWebVitals from "./reportWebVitals";
 import Company from "../src/company/Company";
+
 import { WalletProvider } from "./WalletContext";
 
+
+import Home from "../src/home/Home";
 import { createRoot } from 'react-dom/client';
 import SKU from "./sku/SKU";
 const container = document.getElementById('root');
@@ -42,6 +45,7 @@ root.render(
                     <Route path="/addbatch" element={<Addbatch />} />
                     <Route path="/company" element={<Company />} />
                     <Route path="/consult-sku" element={<SKU />} />
+                    <Route path="/home" element={<Home />} />
                 </Routes>
             </BrowserRouter>
         </WalletProvider>
