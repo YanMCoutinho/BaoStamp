@@ -6,7 +6,8 @@ export default function Intro() {
         <div className="landing-page">
             <section className="hero">
                 <h1>Welcome to BaoStamp</h1>
-                <h2>A seal of transparency and sustainability in the textile industry's production chain</h2>
+                <h2>An internacional seal of transparency and sustentability</h2>
+                <h2>in the textile industry's production chain</h2>
                 <div className="image-section">
                     <img src={IllustrationImg} alt="Illustration" className="floating-image" />
                 </div>
