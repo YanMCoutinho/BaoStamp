@@ -22,6 +22,7 @@ import reportWebVitals from "./reportWebVitals";
 import Company from "../src/company/Company";
 
 import { createRoot } from 'react-dom/client';
+import SKU from "./sku/SKU";
 const container = document.getElementById('root');
 const root = createRoot(container!);
 
@@ -36,6 +37,7 @@ root.render(
                 <Route path="/review-production" element={<ReviewProduction />} />
                 <Route path="/addbatch" element={<Addbatch />} />
                 <Route path="/company" element={<Company />} />
+                <Route path="/consult-sku" element={<SKU />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>
