@@ -30,7 +30,7 @@ import SKU from "./sku/SKU";
 const container = document.getElementById('root');
 const root = createRoot(container!);
 
-const dappAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+const dappAddress = "0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e";
 
 root.render(
     <React.StrictMode>

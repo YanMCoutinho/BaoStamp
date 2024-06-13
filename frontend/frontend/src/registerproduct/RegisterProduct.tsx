@@ -36,6 +36,7 @@ export default function RegisterProduct(props: { dappAddress: string }) {
         components: []
     });
     const { wallet, connect, disconnect } = useWallet();
+    const connectedWallets = useWallet();
     const rollups = useRollups(props.dappAddress);
 
     const [hexInput, setHexInput] = useState<boolean>(false);
@@ -43,10 +44,12 @@ export default function RegisterProduct(props: { dappAddress: string }) {
     const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
 
     useEffect(() => {
+        console.log(connectedWallets)
         if (!wallet) {
             connect();
         }
-    }, [wallet, connect]);
+        console.log(rollups)
+    }, [wallet, connect, rollups]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -104,15 +107,6 @@ export default function RegisterProduct(props: { dappAddress: string }) {
     return (
             <div className='background'>
             <div className='register-product-container'>
-                {
-                    wallet ? (
-                        <div>
-                            <button className='wallet' onClick={() => disconnect(wallet)}>Disconnect Wallet</button>
-                        </div>
-                    ) : (
-                        <button className='wallet' onClick={() => connect()}>Connect Wallet</button>
-                    )
-                }
                 <h2>Register New Product</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -170,7 +164,7 @@ export default function RegisterProduct(props: { dappAddress: string }) {
                     <button type="submit" className="submit-button">Register Product</button>
                 </form>
             </div>
-            <Notices></Notices>
+            
         </div>
     );
 }
