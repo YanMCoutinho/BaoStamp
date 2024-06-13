@@ -1,16 +1,26 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import './style.scss';
+import { useWallet } from "../WalletContext"
 
 const ReviewProduction = () => {
+  const wallet = useWallet();
   const location = useLocation();
   const navigate = useNavigate();
-  const { productionSteps, numberOfSKUs } = location.state;
+  const { productionSteps, numberOfSKUs, id } = location.state;
 
   // Enviar solicitação de verificação backend
   const handleVerificationRequest = () => {
-    console.log("Requesting verification and issuance of the seal:", { productionSteps, numberOfSKUs });
-    alert("Verification requested!");
-    navigate('/');
+    console.log("Requesting verification and issuance of the seal:", { productionSteps, numberOfSKUs, id });
+    //request json
+    const reqJson = {
+      id:{
+        steps:productionSteps,
+        n_skus:numberOfSKUs
+      }
+    }
+    console.log(wallet)
+    console.log(reqJson)
+
   };
 
   return (

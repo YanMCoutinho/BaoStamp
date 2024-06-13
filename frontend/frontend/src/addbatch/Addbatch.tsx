@@ -1,6 +1,6 @@
 import './style.scss';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface ProductionStep {
     id: number;
@@ -24,6 +24,7 @@ export default function AddBatch() {
     const navigate = useNavigate();
     const [productionSteps, setProductionSteps] = useState<ProductionStep[]>([]);
     const [numberOfSKUs, setNumberOfSKUs] = useState<number>(0);
+    const id = useParams()
 
     const handleAddStep = () => {
         if (productionSteps.length < 6) {
@@ -55,7 +56,7 @@ export default function AddBatch() {
     };
 
     const handleContinue = () => {
-        navigate('/review-production', { state: { productionSteps, numberOfSKUs } });
+        navigate('/review-production', { state: { productionSteps, numberOfSKUs, id } });
     };
 
     return (

@@ -42,7 +42,7 @@ root.render(
                     <Route path="/App" element={<App />} />
                     <Route path="/registerproduct" element={<RegisterProduct dappAddress={dappAddress} />} />
                     <Route path="/review-production" element={<ReviewProduction />} />
-                    <Route path="/addbatch" element={<Addbatch />} />
+                    <Route path="/addbatch/:id" element={<Addbatch />} />
                     <Route path="/company" element={<Company />} />
                     <Route path="/consult-sku" element={<SKU />} />
                     <Route path="/home" element={<Home />} />

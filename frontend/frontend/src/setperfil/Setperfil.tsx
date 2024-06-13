@@ -1,31 +1,41 @@
 import './style.scss';
 import React, { useEffect } from 'react';
-import { useConnectWallet, useSetChain } from "@web3-onboard/react";
+import { useSetChain } from "@web3-onboard/react";
 import configFile from "../config.json";
+import { useWallet } from "../WalletContext";
 
 const config: any = configFile;
 
 export default function SetPerfil() {
-    const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+    const { wallet, connect } = useWallet();
     const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
 
     useEffect(() => {
-        if (wallet && connectedChain == null) {
-            setChain({ chainId: Object.keys(config)[0] });
-        }
-    }, [wallet, connectedChain, setChain]);
+        const initializeConnection = async () => {
+
+            if (wallet && !connectedChain) {
+                await setChain({ chainId: Object.keys(config)[0] });
+                window.location.href = '/company';
+            }
+            if(wallet && connectedChain){
+                window.location.href = '/company';
+            }
+        };
+
+        initializeConnection();
+    }, [wallet, connectedChain, setChain, connect]);
 
     const handleCompanyClick = async () => {
         if (!wallet) {
             const connectedWallets = await connect();
             if (connectedWallets && connectedWallets.length > 0) {
-                if (connectedChain == null) {
+                if (!connectedChain) {
                     await setChain({ chainId: Object.keys(config)[0] });
                 }
-                window.location.href = '/company';
+                
             }
         } else {
-            if (connectedChain == null) {
+            if (!connectedChain) {
                 await setChain({ chainId: Object.keys(config)[0] });
             }
             window.location.href = '/company';

@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useConnectWallet, useWallets } from "@web3-onboard/react";
 
 interface WalletContextProps {
-    wallet: any; // Use `any` if specific types are not available
+    wallet: any;
     connect: () => Promise<any>;
     disconnect: (wallet: any) => Promise<void>;
 }
@@ -18,6 +18,12 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             await disconnect(wallet);
         }
     };
+
+    useEffect(() => {
+        if (connectedWallets.length > 0 && !wallet) {
+            connect();
+        }
+    }, [connectedWallets, wallet, connect]);
 
     return (
         <WalletContext.Provider value={{ wallet, connect, disconnect: handleDisconnect }}>

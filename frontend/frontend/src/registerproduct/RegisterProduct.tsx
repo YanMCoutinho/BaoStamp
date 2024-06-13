@@ -1,30 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.scss';
-import injectedModule from "@web3-onboard/injected-wallets";
-import { init } from "@web3-onboard/react";
 import { ethers } from "ethers";
 import { useRollups } from "../useRollups";
-import { useWallets, useConnectWallet } from "@web3-onboard/react";
-
+import { useWallet } from '../WalletContext';
 import configFile from "../config.json";
+import { Notices } from '../Notices';
 
 const config: any = configFile;
 
-const injected: any = injectedModule();
-init({
-    wallets: [injected],
-    chains: Object.entries(config).map(([k, v]: [string, any], i) => ({id: k, token: v.token, label: v.label, rpcUrl: v.rpcUrl})),
-    appMetadata: {
-        name: "Cartesi Rollups Test DApp",
-        icon: "<svg><svg/>",
-        description: "Demo app for Cartesi Rollups",
-        recommendedInjectedWallets: [
-            { name: "MetaMask", url: "https://metamask.io" },
-        ],
-    },
-});
 
-// Definição de tipos para o produto
 interface IProduct {
     id: number;
     name: string;
@@ -32,7 +16,6 @@ interface IProduct {
     components: string[];
 }
 
-// Validar com o time back
 const componentOptions: { [key: string]: string } = {
     "1": "Polyester",
     "2": "Nylon",
@@ -45,57 +28,25 @@ const componentOptions: { [key: string]: string } = {
     "9": "Synthetic Blend"
 };
 
-export default function RegisterProduct(propos: { dappAddress: string }) {
+export default function RegisterProduct(props: { dappAddress: string }) {
     const [newProduct, setNewProduct] = useState<IProduct>({
         id: Math.random(),
         name: '',
         description: '',
         components: []
     });
-    const [dappAddress, setDappAddress] = useState<string>("0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e");
-    //pegar wallet das wallets conectadas
-    const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
-    const rollups = useRollups(dappAddress);
+    const { wallet, connect, disconnect } = useWallet();
+    const rollups = useRollups(props.dappAddress);
 
-    const [connectedWallet] = useWallets();
     const [hexInput, setHexInput] = useState<boolean>(false);
-
-
-
-    
-
-    const sendAddress = async (str: string) => {
-        console.log(`Sending address: ${str} to ${propos.dappAddress}`);
-        if (rollups) {
-            try {
-                await rollups.relayContract.relayDAppAddress(propos.dappAddress);
-            } catch (e) {
-                console.log(`${e}`);
-            }
-        }
-    };
-
-    async function sendInput(input: string = "") {
-        console.log(`Sending input: ${input} to ${propos.dappAddress}`);
-        console.log(`Connected wallet: ${connectedWallet}`);
-        console.log(`rollups: ${rollups}`);
-        if (rollups) {
-            try {
-                let payload = ethers.utils.toUtf8Bytes(input);
-                if (hexInput) {
-                    payload = ethers.utils.arrayify(input);
-                }
-                await rollups.inputContract.addInput(propos.dappAddress, payload);
-            } catch (e) {
-                console.log(`${e}`);
-            }
-        }else{
-            console.log("Rollups is null");
-        }
-    };
-
     const [customComponent, setCustomComponent] = useState('');
     const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (!wallet) {
+            connect();
+        }
+    }, [wallet, connect]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -129,27 +80,29 @@ export default function RegisterProduct(propos: { dappAddress: string }) {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        
-    
-        // Prepare the new product data
-        const newInput = JSON.stringify({ type: 1, data: newProduct });
-        console.log(newInput);
-        
-        // Attempt to add the input
+        const newInput = JSON.stringify({ type: 0, data: newProduct });
         await sendInput(newInput);
     };
 
+    async function sendInput(input: string = "") {
+        if (rollups) {
+            try {
+                console.log(rollups)
+                let payload = ethers.utils.toUtf8Bytes(input);
+                if (hexInput) {
+                    payload = ethers.utils.arrayify(input);
+                }
+                await rollups.inputContract.addInput(props.dappAddress, payload);
+            } catch (e) {
+                console.error(`Error sending input: ${e}`);
+            }
+        } else {
+            console.error("Rollups is null");
+        }
+    }
+
     return (
         <div className='register-product-container'>
-            {
-                wallet ? (
-                    <div>
-                        <button onClick={() => disconnect(wallet)}>Disconnect Wallet</button>
-                    </div>
-                ) : (
-                    <button onClick={() => connect()}>Connect Wallet</button>
-                )
-            }
             <h2>Register New Product</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -206,6 +159,7 @@ export default function RegisterProduct(propos: { dappAddress: string }) {
                 </div>
                 <button type="submit" className="submit-button">Register Product</button>
             </form>
+            <Notices></Notices>
         </div>
     );
 }
