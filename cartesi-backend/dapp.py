@@ -1,6 +1,7 @@
 import logging
 from cartesi.router import DAppAddressRouter
 from cartesi.wallet.ether import EtherWallet
+from difflib import SequenceMatcher
 from cartesi import DApp, Rollup, RollupData, JSONRouter, ABIRouter, ABILiteralHeader, ABIFunctionSelectorHeader, URLRouter, URLParameters
 
 LOGGER = logging.getLogger(__name__)
@@ -28,7 +29,6 @@ LOCAL VARIABLES
 users = {}
 products = {}
 productions = {}
-
 
 """
 PRODUCT INPUT
@@ -76,9 +76,73 @@ PRODUCTION INPUT
 @json_router.advance({"type": 1}) # insert production (each time)
 def product_input(rollup: Rollup, data: RollupData) -> bool:
     payload = data.json_payload()
-    LOGGER.debug("Echoing in type 1 '%s'", payload)
-    LOGGER.debug(data)
-    rollup.notice("0x" + str(payload).encode('utf-8').hex())
+    msg_sender = str(data.metadata.msg_sender).lower()
+
+    if products.get(msg_sender, 0) == 0 or len(products[msg_sender]) == 0:
+        msg = "No products were found for this user"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+    
+    if payload.get('data', 0) == 0:
+        msg = "No data was sent in the payload"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+
+    try:
+        steps = []
+        steps_outputs = ''
+        steps_inputs = ''
+        for step in payload['data']['steps']:
+            steps.append({
+                "id": step['id'],
+                "stage": step['stage'],
+                "continent": step['continent'],
+                "inputProducts": step['inputProducts'],
+                "outputProducts": step['outputProducts'],
+                "startDate": step['startDate'],
+                "endDate": step['endDate'],
+                "briefDescription": step['briefDescription'],
+                "waterUsage": step['waterUsage'],
+                "energyUsage": step['energyUsage'],
+            })
+            
+            if steps_outputs == '':
+                steps_outputs = step['outputProducts']
+                steps_outputs = sorted(steps_outputs).join('').lower()
+                continue
+
+            steps_inputs = sorted(step['inputProducts']).join('').lower()
+
+            matcher = SequenceMatcher(None, steps_outputs, steps_inputs)
+            similarity = matcher.ratio()
+            
+            if similarity <= 0.6:
+                msg = "The output of the previous step is different from the input of the next step"
+                rollup.report("0x" + str(msg).encode('utf-8').hex())
+                return False
+        
+    except:
+        msg = "There are missing values in the steps field or they are incorrect"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+
+    if payload['data'].get('id', '') == '' or payload['data'].get('n_skus', '') == '':
+        msg = "Missing data in the payload"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+
+    new_production =  {
+        "id": len(productions[msg_sender]),
+        "product_id": payload['data']['id'],
+        "steps": steps,
+        "n_skus": payload['data']['n_skus'],
+    }
+
+    #MODELO
+    productions[msg_sender].append(new_production)
+    msg = "production from user " + msg_sender + " was inserted at " + str(len(productions[msg_sender]) - 1)
+    rollup.notice("0x" + str(msg).encode('utf-8').hex())
+    LOGGER.debug("Echoing in type 1")
     return True
 
 
