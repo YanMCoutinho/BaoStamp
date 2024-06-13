@@ -11,9 +11,11 @@ export default function Intro() {
                 <div className="image-section">
                     <img src={IllustrationImg} alt="Illustration" className="floating-image" />
                 </div>
-                <button>Enter and Change the World</button>
+                <button onClick={() => window.location.href="/setperfil"}>Enter and Change the World</button>
             </section>
             <section className="features">
+                <h2>Welcome to the Future of Sustainable Fashion</h2>
+                <p>BaoStamp offers an unparalleled transparency and sustainability seal for the textile industry, utilizing advanced blockchain, tokenization, and artificial intelligence (AI) technologies. Our revolutionary solution ensures that every step of the production chain is recorded securely, immutably, and accessibly, providing confidence and peace of mind to consumers while strengthening your brand's reputation.</p>
                 <h2>How BaoStamp Works</h2>
                 <div className="feature-list">
                     <div className="feature">

@@ -82,6 +82,15 @@ button {
     font-size: 2.5rem;
 }
 
+.features p {
+    max-width: 1000px;
+    font-size: 1.2rem;
+    margin-bottom: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .feature-list {
     display: flex;
     }

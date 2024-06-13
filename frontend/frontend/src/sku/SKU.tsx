@@ -10,6 +10,7 @@ export default function SKU() {
             {
             "step": 1,
             "process": "process_name",
+            "continent": "america",
             "inputs": {
                 "item_name": "qtd"
             },
@@ -23,6 +24,7 @@ export default function SKU() {
             {
             "step": 1,
             "process": "process_name",
+            "continent": "america",
             "inputs": {
                 "item_name": "qtd"
             },
@@ -44,6 +46,7 @@ export default function SKU() {
             {
             "step": 1,
             "process": "Raw Material Collection",
+            "continent": "america",
             "inputs": {
                 "item_name": "Polyester fabric scraps"
             },
@@ -57,6 +60,7 @@ export default function SKU() {
             {
             "step": 2,
             "process": "process_name",
+            "continent": "america",
             "inputs": {
                 "item_name": "qtd"
             },
@@ -77,47 +81,50 @@ export default function SKU() {
 
      
     return (
-        <div className="sku-container">
-            <h1>Visualize a Product</h1>
-            {
-            product.product_name == "name" ?
-            
-            <h1>nada</h1>
+        <div className='background'>
+            <div className="sku-container">
+                <h1>Visualize a Product</h1>
+                {
+                product.product_name == "name" ?
+                
+                <h1>nada</h1>
 
-             :
+                :
 
-             <div className="sku">
-             <div className="sku-header">
-                <h2>{product.product_name}</h2>
-                 <p>{product.product_description}</p>
-             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Stage</th>
-                        <th>Process</th>
-                        <th>Start Date</th>
-                        <th>Input Material</th>
-                        <th>Final Date</th>
-                        <th>Output Material</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {product.steps.map((step, index) => (
-                        <tr key={index}>
-                            <td>{step.step}</td>
-                            <td>{step.process}</td>
-                            <td>{step.date_init}</td>
-                            <td>{step.inputs.item_name}</td>
-                            <td>{step.date_end}</td>
-                            <td>{step.output.item_name}</td>
+                <div className="sku">
+                <div className="sku-header">
+                    <h2>{product.product_name}</h2>
+                    <p>{product.product_description}</p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Process</th>
+                            <th>Start Date</th>
+                            <th>Input Material</th>
+                            <th>Final Date</th>
+                            <th>Output Material</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-         </div>
-            
-            }  
+                    </thead>
+                    <tbody>
+                        {product.steps.map((step, index) => (
+                            <tr key={index}>
+                                <td>{step.step}</td>
+                                <td>{step.process}</td>
+                                <td>{step.continent}</td>
+                                <td>{step.date_init}</td>
+                                <td>{step.inputs.item_name}</td>
+                                <td>{step.date_end}</td>
+                                <td>{step.output.item_name}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+                
+                }  
+            </div>
         </div>
     );
     }

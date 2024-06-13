@@ -140,72 +140,74 @@ export default function RegisterProduct(propos: { dappAddress: string }) {
     };
 
     return (
-        <div className='register-product-container'>
-            {
-                wallet ? (
-                    <div>
-                        <button onClick={() => disconnect(wallet)}>Disconnect Wallet</button>
+            <div className='background'>
+            <div className='register-product-container'>
+                {
+                    wallet ? (
+                        <div>
+                            <button className='wallet' onClick={() => disconnect(wallet)}>Disconnect Wallet</button>
+                        </div>
+                    ) : (
+                        <button className='wallet' onClick={() => connect()}>Connect Wallet</button>
+                    )
+                }
+                <h2>Register New Product</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="name">Product Name:</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={newProduct.name}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
-                ) : (
-                    <button onClick={() => connect()}>Connect Wallet</button>
-                )
-            }
-            <h2>Register New Product</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="name">Product Name:</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={newProduct.name}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="description">Product Description:</label>
-                    <input
-                        type="text"
-                        id="description"
-                        name="description"
-                        value={newProduct.description}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="components">Select Components:</label>
-                    <select
-                        id="components"
-                        multiple={true}
-                        value={newProduct.components}
-                        onChange={handleComponentChange}
-                    >
-                        {Object.keys(componentOptions).map(key => (
-                            <option key={key} value={key}>{componentOptions[key]}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className='custom-component-container'>
-                    <input
-                        type="text"
-                        placeholder="Add custom component"
-                        value={customComponent}
-                        onChange={(e) => setCustomComponent(e.target.value)}
-                    />
-                    <button type="button" onClick={handleAddCustomComponent}>Add Component</button>
-                </div>
-                <div className="selected-components">
-                    <h3>Selected Components:</h3>
-                    <ul>
-                        {selectedComponents.map(key => (
-                            <li key={key}>{componentOptions[key]}</li>
-                        ))}
-                    </ul>
-                </div>
-                <button type="submit" className="submit-button">Register Product</button>
-            </form>
+                    <div className="form-group">
+                        <label htmlFor="description">Product Description:</label>
+                        <input
+                            type="text"
+                            id="description"
+                            name="description"
+                            value={newProduct.description}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="components">Select Components:</label>
+                        <select
+                            id="components"
+                            multiple={true}
+                            value={newProduct.components}
+                            onChange={handleComponentChange}
+                        >
+                            {Object.keys(componentOptions).map(key => (
+                                <option key={key} value={key}>{componentOptions[key]}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='custom-component-container'>
+                        <input
+                            type="text"
+                            placeholder="Add custom component"
+                            value={customComponent}
+                            onChange={(e) => setCustomComponent(e.target.value)}
+                        />
+                        <button type="button" onClick={handleAddCustomComponent}>Add Component</button>
+                    </div>
+                    <div className="selected-components">
+                        <h3>Selected Components:</h3>
+                        <ul>
+                            {selectedComponents.map(key => (
+                                <li key={key}>{componentOptions[key]}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <button type="submit" className="submit-button">Register Product</button>
+                </form>
+            </div>
         </div>
     );
 }

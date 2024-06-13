@@ -1,5 +1,9 @@
 @import '../style/global.scss';
 
+.background {
+    background: url('../assets/back.png') no-repeat center center
+}
+
 .review-production-container {
     padding: 20px;
     background-color: var(--white-fixed);
@@ -8,6 +12,7 @@
     max-width: 65%;
     margin: auto;
     margin-top: 4rem;
+    margin-bottom: 4rem;
     text-align: center;
 
     h2 {
