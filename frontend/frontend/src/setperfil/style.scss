@@ -1,6 +1,7 @@
 @import '../style/global.scss';
 
 .set-perfil-container {
+    background: url('../assets/back.png') no-repeat center center;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -15,12 +16,6 @@
         font-size: 3rem;
         margin-bottom: 40px;
         color: var(--primary);
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease;
-
-        &:hover {
-            transform: scale(1.05);
-        }
     }
 
     .options {
@@ -38,7 +33,8 @@
             flex: 1;
             margin: 0 20px;
             padding: 30px;
-            background: url('../assets/back2.png') no-repeat center center;
+            margin-bottom: 100px;
+            background: var(--white-fixed);
             background-size: cover;
             border-radius: 15px;
             text-align: center;

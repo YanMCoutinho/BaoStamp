@@ -1,5 +1,13 @@
 @import '../style/global.scss';
 
+
+.background {
+    background-color: var(--background);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .sku-container {
     display: flex;
     flex-direction: column;
@@ -8,9 +16,10 @@
     background-color: var(--background);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
-    margin-top: 50px;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
     width: 100%;
 }
 
@@ -35,6 +44,10 @@
 .sku {
     width: 100%;
     overflow-x: auto; 
+}
+
+.sku-header{
+    margin-bottom: 1rem;
 }
 
 table {

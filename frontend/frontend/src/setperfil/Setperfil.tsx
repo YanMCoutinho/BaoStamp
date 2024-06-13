@@ -56,7 +56,7 @@ export default function SetPerfil() {
                         <li>Promote sustainability and eco-friendly practices</li>
                     </ul>
                 </div>
-                <div className="option" onClick={() => window.location.href = '/cliente'}>
+                <div className="option" onClick={() => window.location.href = '/consult-sku'}>
                     <h2>Customer</h2>
                     <p>View the supply chain of registered products</p>
                     <ul>
