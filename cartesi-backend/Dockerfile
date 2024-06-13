@@ -32,6 +32,7 @@ EOF
 
 COPY ./erc721.json .
 COPY ./dapp.py .
+COPY ./model_rf.py .
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
