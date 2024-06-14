@@ -15,7 +15,9 @@ export default function Intro() {
             </section>
             <section className="features">
                 <h2>Welcome to the Future of Sustainable Fashion</h2>
-                <p>BaoStamp offers an unparalleled transparency and sustainability seal for the textile industry, utilizing advanced blockchain, tokenization, and artificial intelligence (AI) technologies. Our revolutionary solution ensures that every step of the production chain is recorded securely, immutably, and accessibly, providing confidence and peace of mind to consumers while strengthening your brand's reputation.</p>
+                <div className='features-div'>
+                    <p className='features-text'>BaoStamp offers an unparalleled transparency and sustainability seal for the textile industry, utilizing advanced blockchain, tokenization, and artificial intelligence (AI) technologies. Our revolutionary solution ensures that every step of the production chain is recorded securely, immutably, and accessibly, providing confidence and peace of mind to consumers while strengthening your brand's reputation.</p>
+                </div>
                 <h2>How BaoStamp Works</h2>
                 <div className="feature-list">
                     <div className="feature">
