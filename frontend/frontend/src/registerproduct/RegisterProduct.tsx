@@ -5,6 +5,7 @@ import { init } from "@web3-onboard/react";
 import { ethers } from "ethers";
 import { useRollups } from "../useRollups";
 import { useWallets, useConnectWallet } from "@web3-onboard/react";
+//pegar wallets conectadas no metamask
 
 import configFile from "../config.json";
 
@@ -57,23 +58,10 @@ export default function RegisterProduct(propos: { dappAddress: string }) {
     const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
     const rollups = useRollups(dappAddress);
 
+    //definir wallet como a wallet conectada no metamask
+    
     const [connectedWallet] = useWallets();
     const [hexInput, setHexInput] = useState<boolean>(false);
-
-
-
-    
-
-    const sendAddress = async (str: string) => {
-        console.log(`Sending address: ${str} to ${propos.dappAddress}`);
-        if (rollups) {
-            try {
-                await rollups.relayContract.relayDAppAddress(propos.dappAddress);
-            } catch (e) {
-                console.log(`${e}`);
-            }
-        }
-    };
 
     async function sendInput(input: string = "") {
         console.log(`Sending input: ${input} to ${propos.dappAddress}`);
