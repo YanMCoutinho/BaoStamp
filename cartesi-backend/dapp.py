@@ -87,6 +87,16 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
         msg = "No data was sent in the payload"
         rollup.report("0x" + str(msg).encode('utf-8').hex())
         return False
+    
+    if payload['data'].get('id', '') == '' or payload['data'].get('n_skus', '') == '':
+        msg = "Missing data in the payload"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+        
+    if (len(products[msg_sender])-1) < int(payload['data']['id']):
+        msg = "The production id does not exist in the user's products list"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
 
     try:
         steps = []
@@ -108,10 +118,10 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
             
             if steps_outputs == '':
                 steps_outputs = step['outputProducts']
-                steps_outputs = sorted(steps_outputs).join('').lower()
+                steps_outputs = ''.join(sorted(steps_outputs)).lower()
                 continue
 
-            steps_inputs = sorted(step['inputProducts']).join('').lower()
+            steps_inputs = ''.join(sorted(step['inputProducts'])).lower()
 
             matcher = SequenceMatcher(None, steps_outputs, steps_inputs)
             similarity = matcher.ratio()
@@ -121,13 +131,8 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
                 rollup.report("0x" + str(msg).encode('utf-8').hex())
                 return False
         
-    except:
-        msg = "There are missing values in the steps field or they are incorrect"
-        rollup.report("0x" + str(msg).encode('utf-8').hex())
-        return False
-
-    if payload['data'].get('id', '') == '' or payload['data'].get('n_skus', '') == '':
-        msg = "Missing data in the payload"
+    except Exception as e:
+        msg = "There are missing values in the steps field or they are incorrect. Error: " + str(e)
         rollup.report("0x" + str(msg).encode('utf-8').hex())
         return False
 
