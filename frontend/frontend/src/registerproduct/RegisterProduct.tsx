@@ -3,6 +3,9 @@ import './styles.scss';
 import { ethers } from "ethers";
 import { useRollups } from "../useRollups";
 import { useWallet } from '../WalletContext';
+import { useWallets, useConnectWallet } from "@web3-onboard/react";
+//pegar wallets conectadas no metamask
+
 import configFile from "../config.json";
 import { Notices } from '../Notices';
 
@@ -39,7 +42,30 @@ export default function RegisterProduct(props: { dappAddress: string }) {
     const connectedWallets = useWallet();
     const rollups = useRollups(props.dappAddress);
 
+    //definir wallet como a wallet conectada no metamask
+    
+    const [connectedWallet] = useWallets();
     const [hexInput, setHexInput] = useState<boolean>(false);
+
+    async function sendInput(input: string = "") {
+        console.log(`Sending input: ${input} to ${props.dappAddress}`);
+        console.log(`Connected wallet: ${connectedWallet}`);
+        console.log(`rollups: ${rollups}`);
+        if (rollups) {
+            try {
+                let payload = ethers.utils.toUtf8Bytes(input);
+                if (hexInput) {
+                    payload = ethers.utils.arrayify(input);
+                }
+                await rollups.inputContract.addInput(props.dappAddress, payload);
+            } catch (e) {
+                console.log(`${e}`);
+            }
+        }else{
+            console.log("Rollups is null");
+        }
+    };
+
     const [customComponent, setCustomComponent] = useState('');
     const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
 
@@ -87,22 +113,6 @@ export default function RegisterProduct(props: { dappAddress: string }) {
         await sendInput(newInput);
     };
 
-    async function sendInput(input: string = "") {
-        if (rollups) {
-            try {
-                console.log(rollups)
-                let payload = ethers.utils.toUtf8Bytes(input);
-                if (hexInput) {
-                    payload = ethers.utils.arrayify(input);
-                }
-                await rollups.inputContract.addInput(props.dappAddress, payload);
-            } catch (e) {
-                console.error(`Error sending input: ${e}`);
-            }
-        } else {
-            console.error("Rollups is null");
-        }
-    }
 
     return (
             <div className='background'>
