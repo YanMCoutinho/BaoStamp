@@ -1,2 +1,2 @@
 python-cartesi
-requests == 2.31.0
+cartesi-wallet
