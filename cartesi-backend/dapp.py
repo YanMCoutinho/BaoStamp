@@ -3,6 +3,32 @@ from cartesi.router import DAppAddressRouter
 from cartesi.wallet.ether import EtherWallet
 from difflib import SequenceMatcher
 from cartesi import DApp, Rollup, RollupData, JSONRouter, ABIRouter, ABILiteralHeader, ABIFunctionSelectorHeader, URLRouter, URLParameters
+from cartesi import abi
+from pydantic import BaseModel
+from cartesi.vouchers import create_voucher_from_model
+import json
+
+class NFT(BaseModel):
+    to: abi.Address
+    tokenId: abi.UInt256
+    tokenUri: abi.String
+
+with open('erc721.json', 'r') as file:
+    data = json.load(file)
+    erc712_abi = data['abi']
+    erc712_address = data['dev_address']
+
+token_id = 1000
+
+def create_nft(msg_sender, status) -> NFT:
+    global token_id
+    token_id += 1
+    token_uri = f"https://fastly.picsum.photos/id/62/200/200.jpg?hmac=IdjAu94sGce82DBYTMbOYzXr7kup1tYqdr0bHkRDWUs"
+    if status:
+        token_uri = f"https://fastly.picsum.photos/id/119/200/200.jpg?hmac=JGrHG7yCKfebsm5jJSWw7F7x2oxeYnm5YE_74PhnRME"
+    args = NFT(to=msg_sender, tokenId=token_id, tokenUri=token_uri)
+    return create_voucher_from_model(destination=erc712_address, function_name='safeMint', args_model=args)
+
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -29,6 +55,7 @@ LOCAL VARIABLES
 users = {}
 products = {}
 productions = {}
+
 
 """
 PRODUCT INPUT
@@ -98,6 +125,8 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
         rollup.report("0x" + str(msg).encode('utf-8').hex())
         return False
 
+    water_usage = 0
+    energy_usage = 0
     try:
         steps = []
         steps_outputs = ''
@@ -115,7 +144,9 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
                 "waterUsage": step['waterUsage'],
                 "energyUsage": step['energyUsage'],
             })
-            
+            water_usage += float(step['waterUsage'])
+            energy_usage += float(step['energyUsage'])
+
             if steps_outputs == '':
                 steps_outputs = step['outputProducts']
                 steps_outputs = ''.join(sorted(steps_outputs)).lower()
@@ -144,13 +175,17 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
     }
 
     #MODELO
+
     productions[msg_sender].append(new_production)
-    msg = "production from user " + msg_sender + " was inserted at " + str(len(productions[msg_sender]) - 1)
+    msg = "production from user " + msg_sender + " was inserted at " + str(len(productions[msg_sender]) - 1) + ". token id: " + str(token_id)
+    rollup.voucher(create_nft(msg_sender, True))
     rollup.notice("0x" + str(msg).encode('utf-8').hex())
     LOGGER.debug("Echoing in type 1")
     return True
 
-
+@json_router.advance({"type": 2}) 
+def get_nft(rollup: Rollup, data: RollupData) -> bool:
+    return True
 
 """
 BALANCE
