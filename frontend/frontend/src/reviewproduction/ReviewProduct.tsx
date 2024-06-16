@@ -1,27 +1,58 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import './style.scss';
 import { useWallet } from "../WalletContext"
+import { Cartesi } from '../ConnectionService';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from 'react';
+
+
+const cartesi = new Cartesi();
 
 const ReviewProduction = () => {
-  const wallet = useWallet();
   const location = useLocation();
   const navigate = useNavigate();
   const { productionSteps, numberOfSKUs, id } = location.state;
 
   // Enviar solicitação de verificação backend
-  const handleVerificationRequest = () => {
+  const handleVerificationRequest = async () => {
     console.log("Requesting verification and issuance of the seal:", { productionSteps, numberOfSKUs, id });
     //request json
     const reqJson = {
-      id:{
-        steps:productionSteps,
-        n_skus:numberOfSKUs
+      type: "1",
+      data:{
+          id:id,
+          steps:productionSteps,
+          n_skus:numberOfSKUs
+        }
       }
+
+    const reqJsonStr = JSON.stringify(reqJson);
+
+    console.log(reqJsonStr);
+
+    const input = await cartesi.sendInputBox(reqJsonStr);
+
+    if(input){
+      console.log("Input sent");
+      toast.success('Batch added successfully');
+      setTimeout(() => {
+        navigate('/company');
+      }, 2000);
+    }else{
+      toast.error('Error adding batch');
     }
-    console.log(wallet)
-    console.log(reqJson)
 
   };
+
+  useEffect(() => {
+    if(!id){
+      navigate('/company');
+    }
+    if(!cartesi.isConnected()){
+      navigate('/company');
+    }
+  }, []);
 
   return (
     <div className="background">
@@ -48,6 +79,7 @@ const ReviewProduction = () => {
         <p className="final-text">Once you are satisfied with the information provided, click the button below to finalize and request verification. This step is crucial for ensuring the transparency and traceability of your production process.</p>
         <button onClick={handleVerificationRequest} className="verification-button">Finish and Request Verification</button>
       </div>
+      <ToastContainer />
     </div>
   );
 };
