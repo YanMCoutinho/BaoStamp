@@ -33,8 +33,4 @@ def transform(water_consumption, energy_consumption, product_type, production_ye
     model_input = [water_consumption, energy_consumption, product_type_encoded, production_year_encoded, number_of_items]
     return model_rf.score(model_input)
 
-print(transform(7500, 1200, ['recycled Poly'], 2020, 3333))
-print(transform(8000, 1500, ['Synthetic Blend'], 2022, 4000))
-print(transform(99999999, 9999999, ['Synthetic Blend'], 99999999, 999990))
-
 

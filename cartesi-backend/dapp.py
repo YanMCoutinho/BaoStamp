@@ -7,7 +7,9 @@ from cartesi import abi
 from pydantic import BaseModel
 from cartesi.vouchers import create_voucher_from_model
 import json
-#import model_rf
+import random
+import datetime
+#import model_functions
 
 """
 Create NFT
@@ -22,7 +24,7 @@ with open('erc721.json', 'r') as file:
     erc712_abi = data['abi']
     erc712_address = data['dev_address']
 
-token_id = 1000
+token_id = random.randint(2000, 121039120309123)
 
 def create_nft(msg_sender, status) -> NFT:
     global token_id
@@ -155,11 +157,11 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
             energy_usage += float(step['energyUsage'])
 
             if steps_outputs == '':
-                steps_outputs = step['outputProducts']
+                steps_outputs = step['outputProducts'].split(',')
                 steps_outputs = ''.join(sorted(steps_outputs)).lower()
                 continue
 
-            steps_inputs = ''.join(sorted(step['inputProducts'])).lower()
+            steps_inputs = ''.join(sorted(step['inputProducts'].split(','))).lower()
 
             matcher = SequenceMatcher(None, steps_outputs, steps_inputs)
             similarity = matcher.ratio()
@@ -181,7 +183,29 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
         "n_skus": payload['data']['n_skus'],
     }
 
-    #MODELO
+    """
+    MODEL IMPLEMENTATION
+    """
+    """
+    date = datetime.datetime.now()
+    year = int(date.year)
+
+    product = products[msg_sender][payload['data']['id']]
+    result = model_functions.predict(water_usage, energy_usage, product['components'], year, len(product['components']))
+    LOGGER.debug("Echoing in type 1 model result: " + str(result))
+
+    index = len(steps) % 2
+    result = result[index]
+
+    if result > 0.5:
+        msg = "The productions was unable to be inserted due to the high environmental impact"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False   
+    """
+    """
+    ADDING PRODUCTION
+    """
+
     if productions[msg_sender].get(payload['data']['id'], -1) == -1:
         productions[msg_sender][payload['data']['id']] = []
 
@@ -196,9 +220,9 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
 Dapp Address
 """
 @url_router.inspect('address/')
-def change_owner(rollup: Rollup, data: RollupData) -> bool:
-    msg = f'{"contract": dapp_address.address}'
-    rollup.notice('0x' + msg.encode('utf-8').hex())
+def get_address(rollup: Rollup, data: RollupData) -> bool:
+    msg = "{" + f"'contract': {str(dapp_address.address)}" + '}'
+    rollup.report('0x' + msg.encode('utf-8').hex())
     return True
 
 
