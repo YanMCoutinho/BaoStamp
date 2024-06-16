@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './styles.scss';
-import { ethers } from "ethers";
-import { useRollups } from "../useRollups";
-import { useWallet } from '../WalletContext';
-import { useWallets, useConnectWallet } from "@web3-onboard/react";
 //pegar wallets conectadas no metamask
-
 import configFile from "../config.json";
-import { Notices } from '../Notices';
+import {Cartesi} from '../ConnectionService';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const config: any = configFile;
+
+const cartesi = new Cartesi();
 
 
 interface IProduct {
@@ -31,51 +30,16 @@ const componentOptions: { [key: string]: string } = {
     "9": "Synthetic Blend"
 };
 
-export default function RegisterProduct(props: { dappAddress: string }) {
+export default function RegisterProduct() {
     const [newProduct, setNewProduct] = useState<IProduct>({
         id: Math.random(),
         name: '',
         description: '',
         components: []
     });
-    const { wallet, connect, disconnect } = useWallet();
-    const connectedWallets = useWallet();
-    const rollups = useRollups(props.dappAddress);
-
-    //definir wallet como a wallet conectada no metamask
-    
-    const [connectedWallet] = useWallets();
-    const [hexInput, setHexInput] = useState<boolean>(false);
-
-    async function sendInput(input: string = "") {
-        console.log(`Sending input: ${input} to ${props.dappAddress}`);
-        console.log(`Connected wallet: ${connectedWallet}`);
-        console.log(`rollups: ${rollups}`);
-        if (rollups) {
-            try {
-                let payload = ethers.utils.toUtf8Bytes(input);
-                if (hexInput) {
-                    payload = ethers.utils.arrayify(input);
-                }
-                await rollups.inputContract.addInput(props.dappAddress, payload);
-            } catch (e) {
-                console.log(`${e}`);
-            }
-        }else{
-            console.log("Rollups is null");
-        }
-    };
 
     const [customComponent, setCustomComponent] = useState('');
     const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
-
-    useEffect(() => {
-        console.log(connectedWallets)
-        if (!wallet) {
-            connect();
-        }
-        console.log(rollups)
-    }, [wallet, connect, rollups]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -110,9 +74,22 @@ export default function RegisterProduct(props: { dappAddress: string }) {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const newInput = JSON.stringify({ type: 0, data: newProduct });
-        await sendInput(newInput);
+
+        const sendInput = await cartesi.sendInputBox(newInput);
+        if(sendInput){
+            toast.success('Product registered successfully');
+            setTimeout(() => {
+                window.location.href = '/company';
+            }, 3000);
+        }
     };
 
+    useEffect(() => {
+        const isConnected = cartesi.isConnected();
+        if(!isConnected){
+            cartesi.connectWallet()
+        }
+    }, [])
 
     return (
             <div className='background'>
@@ -174,7 +151,7 @@ export default function RegisterProduct(props: { dappAddress: string }) {
                     <button type="submit" className="submit-button">Register Product</button>
                 </form>
             </div>
-            
+            <ToastContainer />
         </div>
     );
 }
