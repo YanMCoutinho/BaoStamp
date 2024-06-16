@@ -7,7 +7,11 @@ from cartesi import abi
 from pydantic import BaseModel
 from cartesi.vouchers import create_voucher_from_model
 import json
+#import model_rf
 
+"""
+Create NFT
+"""
 class NFT(BaseModel):
     to: abi.Address
     tokenId: abi.UInt256
@@ -30,11 +34,14 @@ def create_nft(msg_sender, status) -> NFT:
     return create_voucher_from_model(destination=erc712_address, function_name='safeMint', args_model=args)
 
 
+"""
+Init DApp
+"""
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 ETHER_PORTAL_ADDRESS = '0xffdbe43d4c855bf7e0f105c400a50857f53ab044'
-ADDRESS_RELAY_ADDRESS = '0xf5de34d6bbc0446e2a45719e718efebaae179dae'
+ADDRESS_RELAY_ADDRESS = '0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e'
 
 dapp = DApp()
 abi_router = ABIRouter()
@@ -67,7 +74,7 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
 
     if products.get(msg_sender, 0) == 0:
         products[msg_sender] = []
-        productions[msg_sender] = []
+        productions[msg_sender] = {}
         users[msg_sender] = True
 
     if payload.get('data', 0) == 0:
@@ -175,17 +182,25 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
     }
 
     #MODELO
+    if productions[msg_sender].get(payload['data']['id'], -1) == -1:
+        productions[msg_sender][payload['data']['id']] = []
 
-    productions[msg_sender].append(new_production)
+    productions[msg_sender][payload['data']['id']].append(new_production)
     msg = "production from user " + msg_sender + " was inserted at " + str(len(productions[msg_sender]) - 1) + ". token id: " + str(token_id)
     rollup.voucher(create_nft(msg_sender, True))
     rollup.notice("0x" + str(msg).encode('utf-8').hex())
     LOGGER.debug("Echoing in type 1")
     return True
 
-@json_router.advance({"type": 2}) 
-def get_nft(rollup: Rollup, data: RollupData) -> bool:
+"""
+Dapp Address
+"""
+@url_router.inspect('address/')
+def change_owner(rollup: Rollup, data: RollupData) -> bool:
+    msg = f'{"contract": dapp_address.address}'
+    rollup.notice('0x' + msg.encode('utf-8').hex())
     return True
+
 
 """
 BALANCE
@@ -200,7 +215,6 @@ def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
 """
 INSPECT PRODUCTS
 """
-
 @url_router.inspect('products/{address}')
 def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
@@ -216,6 +230,14 @@ def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
     rollup.report('0x' + str(productions.get(msg_sender, [])).encode('utf-8').hex())
     return True
+
+@url_router.inspect('productions/{address}/{id}')
+def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
+    msg_sender = params.path_params.get('address', "").lower()
+    id = int(params.path_params.get('id', 0))
+    rollup.report('0x' + str(productions.get(msg_sender, {id: []}).get(id, [])).encode('utf-8').hex())
+    return True
+
 
 if __name__ == '__main__':
     dapp.run()
