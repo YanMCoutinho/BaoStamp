@@ -1,46 +1,35 @@
+import React, { useState } from 'react';
+import { Cartesi } from '../ConnectionService';
 import './style.scss';
-import React, { useEffect } from 'react';
-import { useSetChain } from "@web3-onboard/react";
-import configFile from "../config.json";
-import { useWallet } from "../WalletContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const config: any = configFile;
+const cartesi = new Cartesi();
 
 export default function SetPerfil() {
-    const { wallet, connect } = useWallet();
-    const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
+    const [isConnecting, setIsConnecting] = useState(false);
 
-    useEffect(() => {
-        const initializeConnection = async () => {
+    async function handleCompanyClick() {
+    console.log('handleCompanyClick');
 
-            if (wallet && !connectedChain) {
-                await setChain({ chainId: Object.keys(config)[0] });
-                window.location.href = '/company';
-            }
-            if(wallet && connectedChain){
-                window.location.href = '/company';
-            }
-        };
-
-        initializeConnection();
-    }, [wallet, connectedChain, setChain, connect]);
-
-    const handleCompanyClick = async () => {
-        if (!wallet) {
-            const connectedWallets = await connect();
-            if (connectedWallets && connectedWallets.length > 0) {
-                if (!connectedChain) {
-                    await setChain({ chainId: Object.keys(config)[0] });
+        if (!isConnecting) {
+            setIsConnecting(true);
+            try {
+                const account = await cartesi.connectWallet();
+                if(account){
+                    toast.success('Connected to wallet');
+                    //esperar 3 segundos para redirecionar
+                    setTimeout(() => {
+                        window.location.href = '/company';
+                    }, 3000);
+                }else{
+                    setIsConnecting(false);
                 }
-                
+                } catch (error) {
+                console.error(error);
+                }
             }
-        } else {
-            if (!connectedChain) {
-                await setChain({ chainId: Object.keys(config)[0] });
-            }
-            window.location.href = '/company';
-        }
-    };
+    }
 
     return (
         <div className="set-perfil-container">
@@ -66,6 +55,7 @@ export default function SetPerfil() {
                     </ul>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }

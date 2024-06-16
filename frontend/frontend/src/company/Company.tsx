@@ -2,13 +2,28 @@ import React, { useState, useEffect } from 'react';
 import './style.scss';
 import { Network } from '../Network';
 import { useNavigate } from 'react-router-dom';
+import {Cartesi} from '../ConnectionService';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const cartesi = new Cartesi();
 
 const Company = () => {
     const navigate = useNavigate();
     const [isConnected, setIsConnected] = useState(false);
     const [companyName, setCompanyName] = useState('Company');
+    const [productsList, setProducts] = useState([]);
 
     useEffect(() => {
+
+        const response = cartesi.getInspect('products').then((response) => {
+            if(response){
+                setProducts(response);
+
+            }else{
+                toast.error('No products found');
+            }
+        })
         const checkWalletConnection = () => {
             const wallet = localStorage.getItem('connectedWallet');
             const company = localStorage.getItem('companyName');
@@ -69,6 +84,7 @@ const Company = () => {
                     </div>
                 </div>
             )}
+            <ToastContainer />
         </div>
     );
 };

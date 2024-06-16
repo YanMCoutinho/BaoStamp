@@ -21,34 +21,28 @@ import ReviewProduction from "../src/reviewproduction/ReviewProduct";
 import reportWebVitals from "./reportWebVitals";
 import Company from "../src/company/Company";
 
-import { WalletProvider } from "./WalletContext";
-
-
 import Home from "../src/home/Home";
 import { createRoot } from 'react-dom/client';
 import SKU from "./sku/SKU";
 const container = document.getElementById('root');
 const root = createRoot(container!);
 
-const dappAddress = "0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e";
 
 root.render(
     <React.StrictMode>
-        <WalletProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Intro />} />
-                    <Route path="/setperfil" element={<SetPerfil />} />
-                    <Route path="/App" element={<App />} />
-                    <Route path="/registerproduct" element={<RegisterProduct dappAddress={dappAddress} />} />
-                    <Route path="/review-production" element={<ReviewProduction />} />
-                    <Route path="/addbatch/:id" element={<Addbatch />} />
-                    <Route path="/company" element={<Company />} />
-                    <Route path="/consult-sku" element={<SKU />} />
-                    <Route path="/home" element={<Home />} />
-                </Routes>
-            </BrowserRouter>
-        </WalletProvider>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Intro />} />
+                <Route path="/setperfil" element={<SetPerfil />} />
+                <Route path="/App" element={<App />} />
+                <Route path="/registerproduct" element={<RegisterProduct/>} />
+                <Route path="/review-production" element={<ReviewProduction />} />
+                <Route path="/addbatch/:id" element={<Addbatch />} />
+                <Route path="/company" element={<Company />} />
+                <Route path="/consult-sku" element={<SKU />} />
+                <Route path="/home" element={<Home />} />
+            </Routes>
+        </BrowserRouter>
     </React.StrictMode>
 );
 
