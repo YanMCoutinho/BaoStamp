@@ -101,6 +101,7 @@ export default function SKU() {
                         <tr>
                             <th>Stage</th>
                             <th>Process</th>
+                            <th>Continent</th>
                             <th>Start Date</th>
                             <th>Input Material</th>
                             <th>Final Date</th>

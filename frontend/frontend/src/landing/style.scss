@@ -1,0 +1,146 @@
+@import '../style/global.scss';
+
+p {
+  font-size: 1.5rem;
+}
+
+.container-p {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 60%;
+  margin: 0 auto;
+  font-size: 1.5rem;
+}
+
+.hero {
+  text-align: center;
+  padding: 30px 0;
+  margin-top: 30px;
+
+  .container {
+    margin-top: 100px;
+
+    h1 {
+      color: var(--primary);
+      font-size: 7.5rem;
+    }
+
+    p {
+      color: var(--text-opaco);
+    }
+
+    .container-text {
+      color: black;
+    }
+
+    .container-bao {
+      font-style: italic;
+    }
+  }
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--white-fixed);
+  background-color: var(--primary);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background-color: var(--caption);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.divider {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.divider-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 80%;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background-color: #222222;
+  text-align: center;
+  padding: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.divider-text {
+  flex: 1;
+  padding: 10px;
+  margin: 0 5px;
+  text-align: center;
+}
+
+.divider-text p {
+  margin: 0;
+  font-size: 1.4rem;
+  color: var(--white-fixed);
+}
+
+.features {
+  text-align: center;
+  padding: 20px 0;
+  padding-bottom: 75px;
+}
+
+.features h2 {
+  margin-bottom: 30px;
+  color: var(--primary);
+  font-size: 2.5rem;
+}
+
+.features p {
+  font-size: 1.2rem;
+  margin-bottom: 4rem;
+}
+
+.features-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-list {
+  display: flex;
+}
+
+.feature {
+  flex: 1;
+  display: block;
+  padding: 20px;
+  margin: 0 3%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  p {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+  }
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+}

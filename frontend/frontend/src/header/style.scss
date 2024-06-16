@@ -1,0 +1,54 @@
+@import '../style/global.scss';
+
+p {
+    font-size: 1.5rem;
+}
+  
+.head-p {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 60%;
+    margin: 0 auto;
+    font-size: 1.5rem;
+}
+
+.header {
+    background-color: var(--white-fixed);
+    padding: 1rem 0;
+    width: 100%; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+
+    .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%; 
+        padding: 0 1rem;
+    }
+
+    nav {
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+        margin-left: auto;
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+
+        li {
+            cursor: pointer;
+            transition: color 0.3s;
+
+            &:hover {
+                color: var(--primary);
+            }
+        }
+    }
+}
