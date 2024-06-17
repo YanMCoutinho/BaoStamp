@@ -35,7 +35,7 @@ command here
 This will install all the dependencies defined in the <b>package.json</b> file that are necessary to run the project. Now the project is ready to be modified. If you still want to start the application, type the command below in the terminal:
 
 ```sh
-npm start
+yarn start
 ```
 
 4. Now open the "frontend/frontend" folder and run the following command:
