@@ -15,21 +15,6 @@ Our blockchain technology provides an immutable and reliable foundation, transpa
 
 With BaoStamp, we transform the textile industry by promoting more sustainable practices and increasing consumer confidence in ethical products. By ensuring transparency and traceability, we help brands adopt responsible practices and provide consumers with the necessary information for conscious choices. BaoStamp is ready to lead the transformation of the textile industry towards a more sustainable future. 🌍
 
-## 📝 Demo Link
-
-_Put the link to your published project and the link to the demonstration video here_
-
-## 📁 Folder Structure
-
-Among the files and folders present in the root of the project, the following are defined:
-
-<b>cartesi-backend</b>: Here are the files related to Cartesi backend.
-
-<b>frontend</b>: Here are the files related to the frontend, such as the screens the user will interact with.
-
-<b>docs</b>: Here are all the project documents in english and portuguese.
-
-<b>README.md</b>: File that serves as an introductory guide and general explanation of the project and the application.
 
 ## 💻 Setup for Development and Code Execution
 
@@ -66,8 +51,14 @@ yarn start
 
 ## 🌐 Technologies Used
 
-- 
+- ReactJS
+- Cartesi (Voucher, Notices, M2cg (AI))
+- Docker
 
 ## 🎓 References
 
-Add the references used in the project.
+- [Plastic-Based Textiles in Clothing Industry Dataset](https://www.kaggle.com/datasets/purohitgaurav/plastic-based-textiles-in-clothing-industry/data)
+- [The impact of textile production and waste on the environment (Infographics) - European Parliament](https://www.europarl.europa.eu/topics/en/article/20201208STO93327/the-impact-of-textile-production-and-waste-on-the-environment-infographics#:~:text=Textile%20production%20is%20estimated%20to,up%20in%20the%20food%20chain)
+- [Fibres Make Up Microplastics in the Arctic - Earth.org](https://earth.org/fibres-make-up-microplastics-in-the-arctic/)
+- [Clothes Washing Linked to Pervasive Plastic Pollution in the Arctic - The Guardian](https://www.theguardian.com/environment/2021/jan/12/clothes-washing-linked-to-pervasive-plastic-pollution-in-the-arctic)
+
