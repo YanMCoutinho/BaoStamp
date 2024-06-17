@@ -32,9 +32,11 @@ pip install -r requirements.txt --no-cache
 find /usr/local/lib -type d -name __pycache__ -exec rm -r {} +
 EOF
 
-COPY ./erc721.json .
-COPY ./dapp.py .
-COPY ./model_rf.py .
+COPY erc721.json .
+COPY model_rf.py .
+#COPY model_functions.py .
+COPY dapp.py .
+
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
