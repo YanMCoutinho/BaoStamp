@@ -21,7 +21,7 @@ const ReviewProduction = () => {
     const reqJson = {
       type: "1",
       data:{
-          id:id,
+          id:id["id"],
           steps:productionSteps,
           n_skus:numberOfSKUs
         }

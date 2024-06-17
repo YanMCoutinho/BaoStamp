@@ -7,23 +7,48 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const cartesi = new Cartesi();
 
+// Define the Product type
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+}
+
 const Company: React.FC = () => {
   const navigate = useNavigate();
   const [isConnected, setIsConnected] = useState(false);
   const [companyName, setCompanyName] = useState('Company');
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    if (!cartesi.isConnected()) {
-      navigate('/setperfil');
-    }
-    cartesi.getInspect('products').then((response) => {
-      if (response) {
-        setProducts(response as any[]);
-      } else {
-        toast.error('No products found');
+    const fetchProducts = async () => {
+      try {
+        let response = await cartesi.getInspect('products');
+        if (typeof response === 'string') {
+          console.log('response is a string');
+          try{
+            //string 2 list
+            response = response.replace(/'/g, '"');
+            response = JSON.parse(response);
+          }catch(error){
+            console.error("Error parsing response:", error);
+            toast.error('Errinho');
+          }
+        }
+        console.log(typeof response, response)
+        
+        // Ensure response is an array and contains Product objects
+        if (Array.isArray(response)) {
+          setProducts(response as Product[]);
+        } else {
+          console.error("Expected an array but got:", response);
+          toast.error('dnioa');
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast.error('Error fetching products');
       }
-    });
+    };
 
     const checkWalletConnection = () => {
       const wallet = localStorage.getItem('connectedWallet');
@@ -35,6 +60,7 @@ const Company: React.FC = () => {
     };
 
     checkWalletConnection();
+    fetchProducts();
   }, []);
 
   const handleConnection = () => {
@@ -46,14 +72,6 @@ const Company: React.FC = () => {
     setCompanyName('Piet');
   };
 
-  const addBatch = (productId: number) => {
-    // Logic to add a new batch to a product
-  };
-
-  const isProduct = (product: any): product is { id: number, name: string, description: string, batches: any[] } => {
-    return product && typeof product.id === 'number';
-  };
-
   return (
     <div className="company-container">
       <h1>{`${companyName} Dashboard`}</h1>
@@ -61,30 +79,15 @@ const Company: React.FC = () => {
       <div className="products-section">
         <button className="add-product-button" onClick={() => navigate(`/registerproduct`)}>Add New Product</button>
         <div className="products-list">
-          {products && products.length > 0 ? (
-            products.map((product) => (
-              isProduct(product) ? (
-                <div key={product.id} className="product-item">
-                  <h3>{product.name}</h3>
-                  <p>{product.description}</p>
-                  <button onClick={() => navigate(`/addBatch/${product.id}`)}>Add New Batch</button>
-                  {product.batches && product.batches.length > 0 ? (
-                    <ul>
-                      {product.batches.map((batch: any, index: number) => (
-                        <li key={index}>Batch {index + 1}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No batches available</p>
-                  )}
-                </div>
-              ) : (
-                <p key={product.id}>No products available</p>
-              )
+          {
+            products.map((product: Product) => (
+              <div key={product.id} className="product-card">
+                <h2>{product.name}</h2>
+                <p>{product.description}</p>
+                <button onClick={() => navigate(`/addbatch/${product.id}`)}>Add Batch</button>
+              </div>
             ))
-          ) : (
-            <p>No products available</p>
-          )}
+          }
         </div>
       </div>
       <ToastContainer />

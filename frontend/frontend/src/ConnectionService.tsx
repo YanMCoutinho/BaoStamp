@@ -136,12 +136,11 @@ export class Cartesi {
         const response = await fetch(`${this.inspectURL}/inspect/${route}/${account}`);
 
         const data = await response.json();
-        console.log(data);
         let payload = this.hex2string(data.reports[0].payload);
-        
         if(payload){
-          return JSON.parse(payload);
+          return payload
         }else{
+          console.error("No data found");
           return false;
         }
       }catch(error){
