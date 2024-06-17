@@ -77,7 +77,7 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
     if products.get(msg_sender, 0) == 0:
         products[msg_sender] = []
         productions[msg_sender] = {}
-        users[msg_sender] = True
+        users[msg_sender] = []
 
     if payload.get('data', 0) == 0:
         msg = "No data was sent in the payload"
@@ -209,6 +209,7 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
     if productions[msg_sender].get(payload['data']['id'], -1) == -1:
         productions[msg_sender][payload['data']['id']] = []
 
+    users[msg_sender].append(token_id)
     productions[msg_sender][payload['data']['id']].append(new_production)
     msg = "production from user " + msg_sender + " was inserted at " + str(len(productions[msg_sender]) - 1) + ". token id: " + str(token_id)
     rollup.voucher(create_nft(msg_sender, True))
@@ -245,6 +246,14 @@ def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
     rollup.report('0x' + str(products.get(msg_sender, [])).encode('utf-8').hex())
     return True
 
+"""
+INSPECT USERS TOKEN IDS
+"""
+@url_router.inspect('tokens/{address}')
+def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
+    msg_sender = params.path_params.get('address', "").lower()
+    rollup.report('0x' + str(users.get(msg_sender, [])).encode('utf-8').hex())
+    return True
 
 """
 INSPECT PRODUCTIONS
