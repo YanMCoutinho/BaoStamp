@@ -28,11 +28,11 @@ token_id = random.randint(2000, 121039120309123)
 
 def create_nft(msg_sender, status) -> NFT:
     global token_id
-    token_id += 1
     token_uri = f"https://fastly.picsum.photos/id/62/200/200.jpg?hmac=IdjAu94sGce82DBYTMbOYzXr7kup1tYqdr0bHkRDWUs"
     if status:
         token_uri = f"https://fastly.picsum.photos/id/119/200/200.jpg?hmac=JGrHG7yCKfebsm5jJSWw7F7x2oxeYnm5YE_74PhnRME"
     args = NFT(to=msg_sender, tokenId=token_id, tokenUri=token_uri)
+    token_id += 1
     return create_voucher_from_model(destination=erc712_address, function_name='safeMint', args_model=args)
 
 
@@ -69,15 +69,16 @@ productions = {}
 """
 PRODUCT INPUT
 """
+     
 @json_router.advance({"type": 0}) #insert product
 def product_input(rollup: Rollup, data: RollupData) -> bool:
     payload = data.json_payload()
     msg_sender = str(data.metadata.msg_sender).lower()
 
     if products.get(msg_sender, 0) == 0:
-        products[msg_sender] = []
-        productions[msg_sender] = {}
-        users[msg_sender] = []
+        msg = "User doesn't exists"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
 
     if payload.get('data', 0) == 0:
         msg = "No data was sent in the payload"
@@ -103,14 +104,13 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
     rollup.notice("0x" + str(msg).encode('utf-8').hex())
 
     return True
-
-
+ 
 
 """
 PRODUCTION INPUT
 """
 @json_router.advance({"type": 1}) # insert production (each time)
-def product_input(rollup: Rollup, data: RollupData) -> bool:
+def production_input(rollup: Rollup, data: RollupData) -> bool:
     payload = data.json_payload()
     msg_sender = str(data.metadata.msg_sender).lower()
 
@@ -134,12 +134,18 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
         rollup.report("0x" + str(msg).encode('utf-8').hex())
         return False
 
+    if len(payload['data']['steps']) != 3:
+        msg = "The number of steps is different from 3"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+
     water_usage = 0
     energy_usage = 0
     try:
         steps = []
         steps_outputs = ''
         steps_inputs = ''
+
         for step in payload['data']['steps']:
             steps.append({
                 "id": step['id'],
@@ -179,6 +185,7 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
     new_production =  {
         "id": len(productions[msg_sender]),
         "product_id": payload['data']['id'],
+        "token_id": token_id,
         "steps": steps,
         "n_skus": payload['data']['n_skus'],
     }
@@ -209,13 +216,60 @@ def product_input(rollup: Rollup, data: RollupData) -> bool:
     if productions[msg_sender].get(payload['data']['id'], -1) == -1:
         productions[msg_sender][payload['data']['id']] = []
 
-    users[msg_sender].append(token_id)
+    users[msg_sender]['tokens'].append(token_id)
     productions[msg_sender][payload['data']['id']].append(new_production)
     msg = "production from user " + msg_sender + " was inserted at " + str(len(productions[msg_sender]) - 1) + ". token id: " + str(token_id)
     rollup.voucher(create_nft(msg_sender, True))
     rollup.notice("0x" + str(msg).encode('utf-8').hex())
     LOGGER.debug("Echoing in type 1")
     return True
+
+
+"""
+User Input
+"""
+@json_router.advance({"type": 2}) #create an user
+def user_input(rollup: Rollup, data: RollupData) -> bool:
+    payload = data.json_payload()
+    msg_sender = str(data.metadata.msg_sender).lower()
+
+    if products.get(msg_sender, 0) != 0:
+        msg = "User already exists"
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+    
+    products[msg_sender] = []
+    productions[msg_sender] = {}
+    
+    try: 
+        users[msg_sender] = {
+            "id": len(users),
+            "address": msg_sender,
+            "tokens": [],
+            "cnpj": payload['data']['cnpj'],
+            "corporate_name": payload['data']['corporate_name'],
+            "fantasy_name": payload['data']['fantasy_name'],
+            "open_date": payload['data']['open_date'],
+            "size": payload['data']['size'],
+            "juridical_nature": payload['data']['juridical_nature'],
+            "MEI": payload['data']['MEI'],
+            "simple": payload['data']['simple'],
+            "type": payload['data']['type'],
+            "situation": payload['data']['situation'],
+        }
+
+    except Exception as e:
+        msg = "There are missing values in the payload. Error: " + str(e)
+        rollup.report("0x" + str(msg).encode('utf-8').hex())
+        return False
+
+    LOGGER.debug("Echoing in type 3 data was inserted")
+    msg = "User " + msg_sender + " was inserted with id " + str(users[msg_sender]['id'])
+    rollup.notice("0x" + str(msg).encode('utf-8').hex())
+
+    return True
+
+
 
 """
 Dapp Address
@@ -241,33 +295,62 @@ def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
 INSPECT PRODUCTS
 """
 @url_router.inspect('products/{address}')
-def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
+def get_products(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
-    rollup.report('0x' + str(products.get(msg_sender, [])).encode('utf-8').hex())
+    array_ids = [i for i in range(0, len(products.get(msg_sender, []))) ]
+    rollup.report('0x' + str(array_ids).encode('utf-8').hex())
+    return True
+
+@url_router.inspect('products/{address}/{product_id}')
+def get_product(rollup: Rollup, params: URLParameters) -> bool:
+    msg_sender = params.path_params.get('address', "").lower()
+    product_id = int(params.path_params.get('product_id', 0))
+    products = products.get(msg_sender, [])
+    if len(products) < product_id :
+        rollup.report('0x' + "[]".encode('utf-8').hex())
+        return True
+    
+    rollup.report('0x' + str(products[product_id]).encode('utf-8').hex())
     return True
 
 """
 INSPECT USERS TOKEN IDS
 """
-@url_router.inspect('tokens/{address}')
-def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
+@url_router.inspect('users')
+def get_users(rollup: Rollup, params: URLParameters) -> bool:
+    users_id = list(users.keys())
+    rollup.report('0x' + str(users_id).encode('utf-8').hex())
+    return True
+
+
+@url_router.inspect('user/{address}')
+def get_users(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
-    rollup.report('0x' + str(users.get(msg_sender, [])).encode('utf-8').hex())
+    rollup.report('0x' + str(users.get(msg_sender, {})).encode('utf-8').hex())
+    return True
+
+
+@url_router.inspect('tokens/{address}')
+def get_tokens(rollup: Rollup, params: URLParameters) -> bool:
+    msg_sender = params.path_params.get('address', "").lower()
+    rollup.report('0x' + str(users.get(msg_sender, {'tokens': []})).encode('utf-8').hex())
     return True
 
 """
 INSPECT PRODUCTIONS
 """
 @url_router.inspect('productions/{address}')
-def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
+def get_productions(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
-    rollup.report('0x' + str(productions.get(msg_sender, [])).encode('utf-8').hex())
+    ids = list(productions.get(msg_sender, {}).keys())
+    rollup.report('0x' + str(ids).encode('utf-8').hex())
     return True
 
-@url_router.inspect('productions/{address}/{id}')
-def balance_of_wallet(rollup: Rollup, params: URLParameters) -> bool:
+
+@url_router.inspect('productions/{address}/{product_id}')
+def get_productions_from_a_product(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
-    id = int(params.path_params.get('id', 0))
+    id = int(params.path_params.get('product_id', 0))
     rollup.report('0x' + str(productions.get(msg_sender, {id: []}).get(id, [])).encode('utf-8').hex())
     return True
 
