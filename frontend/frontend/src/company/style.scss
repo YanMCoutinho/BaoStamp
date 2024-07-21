@@ -5,8 +5,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
-    
+    width: 100%; // Ocupa 100% da largura
+    min-height: 100vh;
     background: url('../assets/back.png') no-repeat center center;
 
     h1 {

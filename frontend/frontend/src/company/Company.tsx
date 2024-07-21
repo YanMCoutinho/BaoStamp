@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
+import './style.scss';
 const cartesi = new Cartesi();
 // Define the Product type
 interface Product {
@@ -37,7 +38,6 @@ const Company: React.FC = () => {
           setProducts(response as Product[]);
         } else {
           console.error("Expected an array but got:", response);
-          toast.error('dnioa');
         }
         let tokens = await cartesi.getInspect('tokens').then((response) => {
           if (typeof response === 'string') {
@@ -81,32 +81,25 @@ const Company: React.FC = () => {
     setCompanyName('Piet');
   };
   return (
-    <div>
-      <h1>{`${companyName} Dashboard`}</h1>
-      <p>This is a dashboard for adding products and visualizing the flow of product batches within the company.</p>
-      <div>
-        <button onClick={() => navigate(`/registerproduct`)}>Add New Product</button>
-        <div>
-          {
-            products.map((product: Product) => (
-              <div key={product.id}>
-                <h2>{product.name}</h2>
-                <p>{product.description}</p>
-                <button onClick={() => navigate(`/addbatch/${product.id}`)}>Add Batch</button>
-              </div>
-            ))
-          }
-        </div>
-      </div>
-      <ToastContainer />
-      {
-        tokensList.map((token: string) => (
-          <div key={token}>
-            <h2>{token}</h2>
+      <div className="company-container">
+        <h1>{`${companyName} Dashboard`}</h1>
+        <p>This is a dashboard for adding products and visualizing the flow of product batches within the company.</p>
+        <div className='products-section'>
+          <button onClick={() => navigate(`/registerproduct`)} className='add-product-button'>Add New Product</button>
+          <div className='products-list'>
+            {
+              products.map((product: Product) => (
+                <div key={product.id} className='product-item'>
+                  <h2>{product.name}</h2>
+                  <p>{product.description}</p>
+                  <button onClick={() => navigate(`/addbatch/${product.id}`)}>Add Batch</button>
+                </div>
+              ))
+            }
           </div>
-        ))
-      }
-    </div>
+        </div>
+        <ToastContainer />
+      </div>
   );
 };
 export default Company;
