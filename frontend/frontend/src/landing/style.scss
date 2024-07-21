@@ -1,5 +1,13 @@
 @import '../style/global.scss';
 
+.background {
+  background: url('../assets/back.png') no-repeat center center
+}
+
+.container{
+  display: flex;
+  flex-direction: column;
+}
 p {
   font-size: 1.5rem;
 }
