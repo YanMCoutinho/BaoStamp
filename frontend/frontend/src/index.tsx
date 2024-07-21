@@ -33,6 +33,7 @@ root.render(
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Intro />} />
+                <Route path="/home" element={<Land />} />
                 <Route path="/setperfil" element={<SetPerfil />} />
                 <Route path="/App" element={<App />} />
                 <Route path="/registerproduct" element={<RegisterProduct/>} />
