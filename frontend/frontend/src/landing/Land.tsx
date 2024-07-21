@@ -15,7 +15,7 @@ export default function Intro() {
                             <h1 className="container-bao">BaoStamp</h1>
                         </div>
                         <p className="container-p">An internacional seal of transparency and sustentability in the textile industry's production chain</p>
-                        <button>Enter and change the world!</button>
+                        <a href='/setperfil'><button>Enter and change the world!</button></a>
                     </div>
                 </section>
                 <section className="divider">

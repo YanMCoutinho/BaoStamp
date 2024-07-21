@@ -15,6 +15,7 @@ const Header: React.FC = () => {
                 <li>About</li>
                 <li>Services</li>
                 <li>Contact</li>
+                <li><a href='/sign'>Sign In</a></li>
             </ul>
         </nav>
     </div>
