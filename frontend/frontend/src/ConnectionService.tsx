@@ -6,6 +6,19 @@ import {
     InputBox__factory
 } from "./generated/rollups";
 
+class User{
+    cnpj: string = "";
+    corporate_name: string = "";
+    fantasy_name: string = "";
+    open_date: string = "yyyy-mm-dd";
+    porte: string = "";
+    juridical_nature: string = "";
+    MEI: boolean = true;
+    simple: boolean = true;
+    type: string = "SA";
+    situation: string = "N/A";
+}
+
 export class Cartesi {
   config: any;
   provider: ethers.providers.Web3Provider | null = null;
@@ -145,6 +158,27 @@ export class Cartesi {
         }
       }catch(error){
         console.error("get inspect error: ",error);
+        return false;
+      }
+    }
+
+    async sign(user: User){
+      const newUserInput = {"type":2, data: user};
+      const payload = JSON.stringify(newUserInput);
+      console.log(`Sending value: ${JSON.stringify(newUserInput)}`);
+      try{
+        if(this.signer){
+          console.log(`Signing with account ${await this.signer.getAddress()}`)
+          const sendInput = await this.sendInputBox(payload);
+          if(sendInput){
+            return true;
+          }else{
+            console.error("Error sending input");
+            return false;
+          }
+        }
+      }catch(error){
+        console.error(error);
         return false;
       }
     }

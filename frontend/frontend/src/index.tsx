@@ -21,6 +21,7 @@ import ReviewProduction from "../src/reviewproduction/ReviewProduct";
 import reportWebVitals from "./reportWebVitals";
 import Company from "../src/company/Company";
 import Land from "../src/landing/Land";
+import Sign from "../src/sign/Sign";
 
 import { createRoot } from 'react-dom/client';
 import SKU from "./sku/SKU";
@@ -40,6 +41,7 @@ root.render(
                 <Route path="/addbatch/:id" element={<Addbatch />} />
                 <Route path="/company" element={<Company />} />
                 <Route path="/consult-sku" element={<SKU />} />
+                <Route path="/sign" element={<Sign />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>
