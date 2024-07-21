@@ -297,8 +297,7 @@ INSPECT PRODUCTS
 @url_router.inspect('products/{address}')
 def get_products(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
-    array_ids = [i for i in range(0, len(products.get(msg_sender, []))) ]
-    rollup.report('0x' + str(array_ids).encode('utf-8').hex())
+    rollup.report('0x' + str(products.get(msg_sender, [])).encode('utf-8').hex())
     return True
 
 @url_router.inspect('products/{address}/{product_id}')
@@ -333,7 +332,7 @@ def get_users(rollup: Rollup, params: URLParameters) -> bool:
 @url_router.inspect('tokens/{address}')
 def get_tokens(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
-    rollup.report('0x' + str(users.get(msg_sender, {'tokens': []})).encode('utf-8').hex())
+    rollup.report('0x' + str(users.get(msg_sender, {'tokens': []})).get('tokens', []).encode('utf-8').hex())
     return True
 
 """
