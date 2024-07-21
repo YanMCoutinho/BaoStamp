@@ -1,48 +1,49 @@
 import connect from '@web3-onboard/core/dist/connect';
-import {Cartesi} from '../ConnectionService';
+import { Cartesi } from '../ConnectionService';
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import './style.scss';
 import 'react-toastify/dist/ReactToastify.css';
 
 const cartesi = new Cartesi();
 
-export default function Sign(){
+export default function Sign() {
     const [connected, setConnected] = useState(false);
     const [user, setUser] = useState({
-		cnpj: "",
-		corporate_name: "",
-		fantasy_name: "",
-		open_date: "yyyy-mm-dd",
-		size: "",
-		juridical_nature: "",
-		MEI: true,
-		simple: true,
-		type: "SA",
-		situation: "N/A"
-	});
+        cnpj: "",
+        corporate_name: "",
+        fantasy_name: "",
+        open_date: "yyyy-mm-dd",
+        size: "",
+        juridical_nature: "",
+        MEI: true,
+        simple: true,
+        type: "SA",
+        situation: "N/A"
+    });
 
     useEffect(() => {
-        if(!cartesi.isConnected()){
+        if (!cartesi.isConnected()) {
             cartesi.connectWallet().then(() => {
                 setConnected(true);
             }
-        );
-        }else{
+            );
+        } else {
             setConnected(true);
         }
-        
+
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log("is connected? ",connected)
-        if(!connected){
+        console.log("is connected? ", connected)
+        if (!connected) {
             toast.error("Connect your wallet first");
             return;
         }
         const signNewUser = await cartesi.sign(user);
-        if(signNewUser){
+        if (signNewUser) {
             toast.success("User signed successfully");
             window.location.href = "/home";
         } else {
@@ -55,6 +56,7 @@ export default function Sign(){
             <div className="form">
                 <h1>Sign</h1>
                 <form>
+                    <h3>CNPJ</h3>
                     <input
                         type="text"
                         name="cnpj"
@@ -62,6 +64,7 @@ export default function Sign(){
                         value={user.cnpj}
                         onChange={(e) => setUser({ ...user, cnpj: e.target.value })}
                     />
+                    <h3>Corporate Name</h3>
                     <input
                         type="text"
                         name="corporate_name"
@@ -69,6 +72,8 @@ export default function Sign(){
                         value={user.corporate_name}
                         onChange={(e) => setUser({ ...user, corporate_name: e.target.value })}
                     />
+                    <h3>Fantasy Name</h3>
+
                     <input
                         type="text"
                         name="fantasy_name"
@@ -76,6 +81,8 @@ export default function Sign(){
                         value={user.fantasy_name}
                         onChange={(e) => setUser({ ...user, fantasy_name: e.target.value })}
                     />
+                    <h3>Open Date</h3>
+
                     <input
                         type="text"
                         name="open_date"
@@ -83,6 +90,8 @@ export default function Sign(){
                         value={user.open_date}
                         onChange={(e) => setUser({ ...user, open_date: e.target.value })}
                     />
+                    <h3>Size</h3>
+
                     <input
                         type="text"
                         name="porte"
@@ -90,6 +99,7 @@ export default function Sign(){
                         value={user.size}
                         onChange={(e) => setUser({ ...user, size: e.target.value })}
                     />
+                    <h3>Juridical Nature</h3>
                     <input
                         type="text"
                         name="juridical_nature"
@@ -127,7 +137,7 @@ export default function Sign(){
                         value={user.situation}
                         onChange={(e) => setUser({ ...user, situation: e.target.value })}
                     />
-                    <button onClick={handleSubmit}>Sign</button>    
+                    <button onClick={handleSubmit}>Sign</button>
                 </form>
             </div>
             <ToastContainer />
