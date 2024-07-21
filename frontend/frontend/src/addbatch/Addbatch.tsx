@@ -1,6 +1,8 @@
 import './style.scss';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface ProductionStep {
     id: number;
@@ -41,7 +43,7 @@ export default function AddBatch() {
                 energyUsage: ''
             }]);
         } else {
-            alert('Maximum of 6 production steps can be added.');
+            toast('Maximum of 3 production steps can be added.');
         }
     };
 
@@ -77,11 +79,8 @@ export default function AddBatch() {
                             >
                                 <option value="">Select the stage of production</option>
                                 <option value="Harvest">Harvest</option>
-                                <option value="Processing">Processing</option>
-                                <option value="Spinning">Spinning</option>
-                                <option value="Weaving">Weaving</option>
-                                <option value="Dyeing">Dyeing</option>
-                                <option value="Cutting and Sewing">Cutting and Sewing</option>
+                                <option value="Processing">Industry</option>
+                                <option value="Spinning">Design</option>
                             </select>
                         </div>
                         <div className="form-group">
@@ -142,7 +141,7 @@ export default function AddBatch() {
                             <label htmlFor={`brief-description-${step.id}`}>Brief Description of the Process:</label>
                             <textarea
                                 id={`brief-description-${step.id}`}
-                                placeholder="Provide a brief description of the process"
+                                placeholder="Provide a brief description of the process including the company responsible for the stage"
                                 value={step.briefDescription}
                                 onChange={(e) => handleInputChange(index, 'briefDescription', e.target.value)}
                             />
@@ -191,6 +190,7 @@ export default function AddBatch() {
                     <p>After submitting the production details, our system will review the information. If approved, NFTs representing each SKU will be issued along with a BaoStamp certification, enhancing your product's transparency and trustworthiness.</p>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }
