@@ -11,7 +11,7 @@ class User{
     corporate_name: string = "";
     fantasy_name: string = "";
     open_date: string = "yyyy-mm-dd";
-    porte: string = "";
+    size: string = "";
     juridical_nature: string = "";
     MEI: boolean = true;
     simple: boolean = true;
@@ -163,6 +163,7 @@ export class Cartesi {
     }
 
     async sign(user: User){
+      console.log("Signing user");
       const newUserInput = {"type":2, data: user};
       const payload = JSON.stringify(newUserInput);
       console.log(`Sending value: ${JSON.stringify(newUserInput)}`);
@@ -176,6 +177,9 @@ export class Cartesi {
             console.error("Error sending input");
             return false;
           }
+        }else{
+          console.error("No wallet is connected at sign function");
+          return false;
         }
       }catch(error){
         console.error(error);
