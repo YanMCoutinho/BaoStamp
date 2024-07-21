@@ -332,7 +332,7 @@ def get_users(rollup: Rollup, params: URLParameters) -> bool:
 @url_router.inspect('tokens/{address}')
 def get_tokens(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
-    rollup.report('0x' + str(users.get(msg_sender, {'tokens': []})).get('tokens', []).encode('utf-8').hex())
+    rollup.report('0x' + str(users.get(msg_sender, {'tokens': []}).get('tokens', [])).encode('utf-8').hex())
     return True
 
 """
