@@ -4,9 +4,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; // Centraliza verticalmente
-    padding: 40px;
-    
+    justify-content: center;
+    width: 100%; // Ocupa 100% da largura
+    min-height: 100vh;
     background: url('../assets/back.png') no-repeat center center;
 
     h1 {
@@ -93,5 +93,20 @@
                 }
             }
         }
+    }
+    .token-card{
+        width: 100%;
+        max-width: 800px;
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: var(--white-fixed);
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
     }
 }

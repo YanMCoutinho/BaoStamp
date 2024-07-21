@@ -27,7 +27,7 @@ export default function AddBatch() {
     const id = useParams()
 
     const handleAddStep = () => {
-        if (productionSteps.length < 6) {
+        if (productionSteps.length < 3) {
             setProductionSteps([...productionSteps, {
                 id: productionSteps.length + 1,
                 stage: '',
