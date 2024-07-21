@@ -161,6 +161,24 @@ export class Cartesi {
         return false;
       }
     }
+    async getInspectClient(route:string){
+      try{
+        const account = await this.signer?.getAddress();
+        const response = await fetch(`${this.inspectURL}/inspect/${route}`);
+
+        const data = await response.json();
+        let payload = this.hex2string(data.reports[0].payload);
+        if(payload){
+          return payload
+        }else{
+          console.error("No data found");
+          return false;
+        }
+      }catch(error){
+        console.error("get inspect error: ",error);
+        return false;
+      }
+    }
 
     async sign(user: User){
       console.log("Signing user");

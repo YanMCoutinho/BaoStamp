@@ -42,8 +42,8 @@ root.render(
                 <Route path="/review-production" element={<ReviewProduction />} />
                 <Route path="/addbatch/:id" element={<Addbatch />} />
                 <Route path="/company" element={<Company />} />
-                <Route path="/consult-sku" element={<SKU />} />
                 <Route path="/sign" element={<Sign />} />
+                <Route path="/sku/:address/:product_id/:production_id" element={<SKU />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>
