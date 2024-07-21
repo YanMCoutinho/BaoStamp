@@ -32,6 +32,7 @@ root.render(
     <React.StrictMode>
         <BrowserRouter>
             <Routes>
+                <Route path="/home" element={<Land />} />
                 <Route path="/" element={<Intro />} />
                 <Route path="/setperfil" element={<SetPerfil />} />
                 <Route path="/App" element={<App />} />
