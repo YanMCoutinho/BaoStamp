@@ -19,7 +19,7 @@ const ReviewProduction = () => {
     console.log("Requesting verification and issuance of the seal:", { productionSteps, numberOfSKUs, id });
     //request json
     const reqJson = {
-      type: "1",
+      type: 1,
       data:{
           id:id["id"],
           steps:productionSteps,
