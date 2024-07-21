@@ -304,12 +304,12 @@ def get_products(rollup: Rollup, params: URLParameters) -> bool:
 def get_product(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
     product_id = int(params.path_params.get('product_id', 0))
-    products = products.get(msg_sender, [])
-    if len(products) < product_id :
+    selected_products = products.get(msg_sender, [])
+    if len(selected_products) < product_id :
         rollup.report('0x' + "[]".encode('utf-8').hex())
         return True
     
-    rollup.report('0x' + str(products[product_id]).encode('utf-8').hex())
+    rollup.report('0x' + str(selected_products[product_id]).encode('utf-8').hex())
     return True
 
 """
@@ -350,9 +350,24 @@ def get_productions(rollup: Rollup, params: URLParameters) -> bool:
 def get_productions_from_a_product(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
     id = int(params.path_params.get('product_id', 0))
-    rollup.report('0x' + str(productions.get(msg_sender, {id: []}).get(id, [])).encode('utf-8').hex())
+    requested_production = str( productions.get(msg_sender, {}).get(id, []) )
+    rollup.report('0x' + requested_production.encode('utf-8').hex())
     return True
 
+
+@url_router.inspect('production/{address}/{product_id}/{production_id}')
+def get_productions_from_a_product(rollup: Rollup, params: URLParameters) -> bool:
+    msg_sender = params.path_params.get('address', "").lower()
+    id = int(params.path_params.get('product_id', 0))
+    production_id = int(params.path_params.get('production_id', 0))
+    all_productions = productions.get(msg_sender, {}).get(id, [])
+    if len(all_productions) < production_id :
+        msg = "{" + "'id': {}, 'product_id': {}, 'token_id': -1, 'steps': [], 'n_skus': 0".format(production_id, id) + "}"
+        rollup.report('0x' + msg.encode('utf-8').hex())
+        return False
+    requested_production = str(all_productions[production_id])
+    rollup.report('0x' + requested_production.encode('utf-8').hex())
+    return True
 
 if __name__ == '__main__':
     dapp.run()
