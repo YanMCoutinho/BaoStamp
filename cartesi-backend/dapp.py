@@ -305,7 +305,7 @@ def get_product(rollup: Rollup, params: URLParameters) -> bool:
     msg_sender = params.path_params.get('address', "").lower()
     product_id = int(params.path_params.get('product_id', 0))
     selected_products = products.get(msg_sender, [])
-    if len(selected_products) < product_id :
+    if len(selected_products) <= product_id :
         rollup.report('0x' + "[]".encode('utf-8').hex())
         return True
     
@@ -361,7 +361,13 @@ def get_productions_from_a_product(rollup: Rollup, params: URLParameters) -> boo
     id = int(params.path_params.get('product_id', 0))
     production_id = int(params.path_params.get('production_id', 0))
     all_productions = productions.get(msg_sender, {}).get(id, [])
-    if len(all_productions) < production_id :
+
+    print(id)
+    print(production_id)
+    print(productions.get(msg_sender, {}))
+    print(all_productions)
+
+    if len(all_productions) <= production_id :
         msg = "{" + "'id': {}, 'product_id': {}, 'token_id': -1, 'steps': [], 'n_skus': 0".format(production_id, id) + "}"
         rollup.report('0x' + msg.encode('utf-8').hex())
         return False

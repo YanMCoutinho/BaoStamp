@@ -39,15 +39,15 @@ export default function AddBatch() {
                 startDate: '',
                 endDate: '',
                 briefDescription: '',
-                waterUsage: '',
-                energyUsage: ''
+                waterUsage: 0,
+                energyUsage: 0
             }]);
         } else {
             toast('Maximum of 3 production steps can be added.');
         }
     };
 
-    const handleInputChange = (index: number, field: keyof ProductionStep, value: string) => {
+    const handleInputChange = (index: number, field: keyof ProductionStep, value) => {
         const newSteps = productionSteps.map((step, i) => {
             if (i === index) {
                 return { ...step, [field]: value };

@@ -63,7 +63,7 @@ export default function SKU() {
                 }
               }
                 
-                let production_string = await cartesi.getInspectClient(`productions/${address}/${product_id}/${production_id}`);
+                let production_string = await cartesi.getInspectClient(`production/${address}/${product_id}/${production_id}`);
                 let production = {steps: [], n_skus: 0};
                 if (typeof production_string === 'string') {
                     console.log('production is a string');
