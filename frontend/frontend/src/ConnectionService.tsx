@@ -205,4 +205,32 @@ export class Cartesi {
       }
     }
 
+    async isUserSigned(){
+      try{
+        const account = await this.signer?.getAddress();
+        console.log(`Fetching user data for account ${account}`);
+        const response = await fetch(`${this.inspectURL}/inspect/users`);
+        const data = await response.json();
+        console.log(data);
+        let payload = JSON.parse(this.hex2string(data.reports[0].payload).replace(/'/g, '"'));
+        console.log(payload);
+        //verificar se account está na lista de usuários
+        if(account){
+          if(payload.includes(account.toLowerCase())){
+            return true;
+          }else{
+            return false;
+          }
+        }else{
+          console.error("No account found");
+          return false;
+        }
+      }
+      catch(error){
+        console.error("Error fetching user data: ",error);
+        return false;
+      }
+    }
+
+
 }

@@ -1,6 +1,11 @@
 @import '../style/global.scss';
 
 
+.summary_sku{
+    font-size: 2rem;
+    color: var(--primary);
+    padding: 10px;
+}
 .background {
     background-color: var(--background);
     min-height: 100vh;
