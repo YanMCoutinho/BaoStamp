@@ -5,60 +5,63 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 interface ProductionStep {
-    id: number;
-    stage: string;
-    continent: string;
-    inputProducts: string;
-    outputProducts: string;
-    startDate: string;
-    endDate: string;
-    briefDescription: string;
-    waterUsage: string;
-    energyUsage: string;
+    name: string;
+    initial_date: string;
+    final_date: string;
+    farmer?: string;
+    community?: string;
+    municipality?: string;
+    material?: string;
+    weight_kg?: number;
+    comments?: string;
+    avarage_farm_area_ha?: number;
+    ref_doc_link?: string;
+    industry?: string;
+    team_name?: string;
+    designer?: string;
+    doc_link?: string;
 }
 
 interface Batch {
-    productionSteps: ProductionStep[];
-    numberOfSKUs: number;
+    steps: ProductionStep[];
+    n_skus: number;
 }
 
 export default function AddBatch() {
     const navigate = useNavigate();
-    const [productionSteps, setProductionSteps] = useState<ProductionStep[]>([]);
-    const [numberOfSKUs, setNumberOfSKUs] = useState<number>(0);
+    const [steps, setSteps] = useState<ProductionStep[]>([]);
+    const [n_skus, setNSKUs] = useState<number>(0);
     const id = useParams()
 
     const handleAddStep = () => {
-        if (productionSteps.length < 3) {
-            setProductionSteps([...productionSteps, {
-                id: productionSteps.length + 1,
-                stage: '',
-                continent: '',
-                inputProducts: '',
-                outputProducts: '',
-                startDate: '',
-                endDate: '',
-                briefDescription: '',
-                waterUsage: 0,
-                energyUsage: 0
+        if (steps.length < 3) {
+            setSteps([...steps, {
+                name: '',
+                initial_date: '',
+                final_date: ''
             }]);
         } else {
             toast('Maximum of 3 production steps can be added.');
         }
     };
 
-    const handleInputChange = (index: number, field: keyof ProductionStep, value) => {
-        const newSteps = productionSteps.map((step, i) => {
+    const handleInputChange = (index: number, field: keyof ProductionStep, value: any) => {
+        const newSteps = steps.map((step, i) => {
             if (i === index) {
                 return { ...step, [field]: value };
             }
             return step;
         });
-        setProductionSteps(newSteps);
+        console.log(newSteps);
+        setSteps(newSteps);
     };
 
     const handleContinue = () => {
-        navigate('/review-production', { state: { productionSteps, numberOfSKUs, id } });
+        const batch: Batch = {
+            steps,
+            n_skus
+        };
+        navigate('/review-production', { state: { batch, id } });
     };
 
     return (
@@ -67,122 +70,203 @@ export default function AddBatch() {
                 <h2>Add Production Steps</h2>
                 <p>Welcome to our batch registration system. Here you can efficiently document each step of your product's journey, ensuring transparency and traceability. This process not only enhances your brand's credibility but also aligns with modern sustainability practices.</p>
 
-                {productionSteps.map((step, index) => (
-                    <div key={step.id} className="production-step">
-                        <h3>Step {step.id}</h3>
+                {steps.map((step, index) => (
+                    <div key={index} className="production-step">
+                        <h3>Step {index + 1}</h3>
                         <div className="form-group">
-                            <label htmlFor={`stage-${step.id}`}>Stage Name:</label>
-                            <select
-                                id={`stage-${step.id}`}
-                                value={step.stage}
-                                onChange={(e) => handleInputChange(index, 'stage', e.target.value)}
-                            >
-                                <option value="">Select the stage of production</option>
-                                <option value="Harvest">Harvest</option>
-                                <option value="Processing">Industry</option>
-                                <option value="Spinning">Design</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor={`continent-${step.id}`}>Continent of Production:</label>
-                            <select
-                                id={`continent-${step.id}`}
-                                value={step.continent}
-                                onChange={(e) => handleInputChange(index, 'continent', e.target.value)}
-                            >
-                                <option value="">Select the continent where production occurs</option>
-                                <option value="America">America</option>
-                                <option value="Africa">Africa</option>
-                                <option value="Europe">Europe</option>
-                                <option value="Asia">Asia</option>
-                                <option value="Oceania">Oceania</option>
-                                <option value="Antarctica">Antarctica</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor={`input-products-${step.id}`}>Input Products:</label>
+                            <label htmlFor={`name-${index}`}>Step Name:</label>
                             <input
                                 type="text"
-                                id={`input-products-${step.id}`}
-                                placeholder="Enter the input products (e.g., Cotton, Polyester)"
-                                value={step.inputProducts}
-                                onChange={(e) => handleInputChange(index, 'inputProducts', e.target.value)}
+                                id={`name-${index}`}
+                                placeholder="Enter the step name"
+                                value={step.name}
+                                onChange={(e) => handleInputChange(index, 'name', e.target.value)}
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor={`output-products-${step.id}`}>Output Products:</label>
-                            <input
-                                type="text"
-                                id={`output-products-${step.id}`}
-                                placeholder="Enter the output products (e.g., Fabric, Yarn)"
-                                value={step.outputProducts}
-                                onChange={(e) => handleInputChange(index, 'outputProducts', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor={`start-date-${step.id}`}>Start Date:</label>
+                            <label htmlFor={`initial-date-${index}`}>Initial Date:</label>
                             <input
                                 type="date"
-                                id={`start-date-${step.id}`}
-                                value={step.startDate}
-                                onChange={(e) => handleInputChange(index, 'startDate', e.target.value)}
+                                id={`initial-date-${index}`}
+                                value={step.initial_date}
+                                onChange={(e) => handleInputChange(index, 'initial_date', e.target.value)}
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor={`end-date-${step.id}`}>End Date:</label>
+                            <label htmlFor={`final-date-${index}`}>Final Date:</label>
                             <input
                                 type="date"
-                                id={`end-date-${step.id}`}
-                                value={step.endDate}
-                                onChange={(e) => handleInputChange(index, 'endDate', e.target.value)}
+                                id={`final-date-${index}`}
+                                value={step.final_date}
+                                onChange={(e) => handleInputChange(index, 'final_date', e.target.value)}
                             />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor={`brief-description-${step.id}`}>Brief Description of the Process:</label>
-                            <textarea
-                                id={`brief-description-${step.id}`}
-                                placeholder="Provide a brief description of the process including the company responsible for the stage"
-                                value={step.briefDescription}
-                                onChange={(e) => handleInputChange(index, 'briefDescription', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor={`water-usage-${step.id}`}>Water Usage (liters):</label>
-                            <input
-                                type="number"
-                                id={`water-usage-${step.id}`}
-                                placeholder="Enter the amount of water used"
-                                value={step.waterUsage}
-                                onChange={(e) => handleInputChange(index, 'waterUsage', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor={`energy-usage-${step.id}`}>Energy Usage (kWh):</label>
-                            <input
-                                type="number"
-                                id={`energy-usage-${step.id}`}
-                                placeholder="Enter the amount of energy used"
-                                value={step.energyUsage}
-                                onChange={(e) => handleInputChange(index, 'energyUsage', e.target.value)}
-                            />
-                        </div>
+                        {step.name === 'Harvest' && (
+                            <>
+                                <div className="form-group">
+                                    <label htmlFor={`farmer-${index}`}>Farmer:</label>
+                                    <input
+                                        type="text"
+                                        id={`farmer-${index}`}
+                                        placeholder="Enter the farmer's name"
+                                        value={step.farmer}
+                                        onChange={(e) => handleInputChange(index, 'farmer', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`community-${index}`}>Community:</label>
+                                    <input
+                                        type="text"
+                                        id={`community-${index}`}
+                                        placeholder="Enter the community name"
+                                        value={step.community}
+                                        onChange={(e) => handleInputChange(index, 'community', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`municipality-${index}`}>Municipality:</label>
+                                    <input
+                                        type="text"
+                                        id={`municipality-${index}`}
+                                        placeholder="Enter the municipality name"
+                                        value={step.municipality}
+                                        onChange={(e) => handleInputChange(index, 'municipality', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`material-${index}`}>Material:</label>
+                                    <input
+                                        type="text"
+                                        id={`material-${index}`}
+                                        placeholder="Enter the material"
+                                        value={step.material}
+                                        onChange={(e) => handleInputChange(index, 'material', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`weight-${index}`}>Weight (kg):</label>
+                                    <input
+                                        type="number"
+                                        id={`weight-${index}`}
+                                        placeholder="Enter the weight in kilograms"
+                                        value={step.weight_kg}
+                                        onChange={(e) => handleInputChange(index, 'weight_kg', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`comments-${index}`}>Comments:</label>
+                                    <textarea
+                                        id={`comments-${index}`}
+                                        placeholder="Enter any additional comments"
+                                        value={step.comments}
+                                        onChange={(e) => handleInputChange(index, 'comments', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`farm-area-${index}`}>Average Farm Area (ha):</label>
+                                    <input
+                                        type="number"
+                                        id={`farm-area-${index}`}
+                                        placeholder="Enter the average farm area in hectares"
+                                        value={step.avarage_farm_area_ha}
+                                        onChange={(e) => handleInputChange(index, 'avarage_farm_area_ha', e.target.value)}
+                                    />
+                                </div>
+                            </>
+                        )}
+                        {step.name === 'Industry' && (
+                            <>
+                                <div className="form-group">
+                                    <label htmlFor={`ref-doc-link-${index}`}>Reference Document Link:</label>
+                                    <input
+                                        type="text"
+                                        id={`ref-doc-link-${index}`}
+                                        placeholder="Enter the reference document link"
+                                        value={step.ref_doc_link}
+                                        onChange={(e) => handleInputChange(index, 'ref_doc_link', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`industry-${index}`}>Industry:</label>
+                                    <input
+                                        type="text"
+                                        id={`industry-${index}`}
+                                        placeholder="Enter the industry name"
+                                        value={step.industry}
+                                        onChange={(e) => handleInputChange(index, 'industry', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`comments-${index}`}>Comments:</label>
+                                    <textarea
+                                        id={`comments-${index}`}
+                                        placeholder="Enter any additional comments"
+                                        value={step.comments}
+                                        onChange={(e) => handleInputChange(index, 'comments', e.target.value)}
+                                    />
+                                </div>
+                            </>
+                        )}
+                        {step.name === 'Design' && (
+                            <>
+                                <div className="form-group">
+                                    <label htmlFor={`team-name-${index}`}>Team Name:</label>
+                                    <input
+                                        type="text"
+                                        id={`team-name-${index}`}
+                                        placeholder="Enter the team name"
+                                        value={step.team_name}
+                                        onChange={(e) => handleInputChange(index, 'team_name', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`designer-${index}`}>Designer:</label>
+                                    <input
+                                        type="text"
+                                        id={`designer-${index}`}
+                                        placeholder="Enter the designer's name"
+                                        value={step.designer}
+                                        onChange={(e) => handleInputChange(index, 'designer', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`doc-link-${index}`}>Document Link:</label>
+                                    <input
+                                        type="text"
+                                        id={`doc-link-${index}`}
+                                        placeholder="Enter the document link"
+                                        value={step.doc_link}
+                                        onChange={(e) => handleInputChange(index, 'doc_link', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor={`comments-${index}`}>Comments:</label>
+                                    <textarea
+                                        id={`comments-${index}`}
+                                        placeholder="Enter any additional comments"
+                                        value={step.comments}
+                                        onChange={(e) => handleInputChange(index, 'comments', e.target.value)}
+                                    />
+                                </div>
+                            </>
+                        )}
                     </div>
                 ))}
                 <div className="batch-details">
                     <div className="form-group">
-                        <label htmlFor="number-of-skus">Number of SKUs:</label>
+                        <label htmlFor="n-skus">Number of SKUs:</label>
                         <input
                             type="number"
-                            id="number-of-skus"
+                            id="n-skus"
                             placeholder="Enter the number of SKUs"
-                            value={numberOfSKUs.toString()}
-                            onChange={(e) => setNumberOfSKUs(parseInt(e.target.value) || 0)}
+                            value={n_skus.toString()}
+                            onChange={(e) => setNSKUs(parseInt(e.target.value) || 0)}
                         />
                     </div>
                 </div>
                 <div className="buttons_final">
                     <button onClick={handleAddStep}>Add Step</button>
-                    {productionSteps.length > 0 && (
+                    {steps.length > 0 && (
                         <button onClick={handleContinue} className="continue">Continue</button>
                     )}
                 </div>
