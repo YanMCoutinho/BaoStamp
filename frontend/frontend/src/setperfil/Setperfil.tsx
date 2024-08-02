@@ -32,7 +32,7 @@ export default function SetPerfil() {
                         toast.error('User not signed');
                         setTimeout(() => {
                             console.log('redirecting to sign');
-                            //window.location.href = '/sign';
+                            window.location.href = '/sign';
                         }
                         , 3000);
                     }

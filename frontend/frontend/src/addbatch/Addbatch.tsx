@@ -33,7 +33,7 @@ export default function AddBatch() {
     const [n_skus, setNSKUs] = useState<number>(0);
     const id = useParams()
 
-    const handleAddStep = () => {
+    const handleAddStep:any = () => {
         if (steps.length < 3) {
             setSteps([...steps, {
                 name: '',

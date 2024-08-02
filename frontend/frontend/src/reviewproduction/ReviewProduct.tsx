@@ -37,7 +37,7 @@ const ReviewProduction = () => {
       console.log("Input sent");
       toast.success('Batch added successfully');
       setTimeout(() => {
-        navigate('/company');
+        navigate('/sku/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0/0');
       }, 2000);
     } else {
       toast.error('Error adding batch');
