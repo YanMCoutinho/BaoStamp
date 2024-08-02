@@ -70,6 +70,7 @@ export default function SKU() {
                     try{
                         production_string = production_string.replace(/'/g, '"');
                         production = JSON.parse(production_string);
+                        console.log(production);
                     } catch(error) {
                         console.error("Error parsing production:", error);
                         toast.error('Erro ao tentar ler os dados da blockchain');

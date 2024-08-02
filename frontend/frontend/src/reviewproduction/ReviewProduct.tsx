@@ -1,31 +1,30 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import './style.scss';
-import { useWallet } from "../WalletContext"
+import { useWallet } from "../WalletContext";
 import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from 'react';
-
+import { useEffect, useState } from 'react';
 
 const cartesi = new Cartesi();
 
 const ReviewProduction = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { productionSteps, numberOfSKUs, id } = location.state;
+  const { batch, id } = location.state;
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   // Enviar solicitação de verificação backend
   const handleVerificationRequest = async () => {
-    console.log("Requesting verification and issuance of the seal:", { productionSteps, numberOfSKUs, id });
-    //request json
+    console.log("Requesting verification and issuance of the seal:", { id, batch });
     const reqJson = {
       type: 1,
-      data:{
-          id:id["id"],
-          steps:productionSteps,
-          n_skus:numberOfSKUs
-        }
+      data: {
+        id: id["id"],
+        steps: batch["steps"],
+        n_skus: batch["n_skus"],
       }
+    };
 
     const reqJsonStr = JSON.stringify(reqJson);
 
@@ -33,52 +32,67 @@ const ReviewProduction = () => {
 
     const input = await cartesi.sendInputBox(reqJsonStr);
 
-    if(input){
+    if (input) {
       console.log("Input sent");
       toast.success('Batch added successfully');
       setTimeout(() => {
         navigate('/company');
       }, 2000);
-    }else{
+    } else {
       toast.error('Error adding batch');
     }
-
   };
 
   useEffect(() => {
-    if(!id){
+    console.log("ReviewProduction", { batch, id });
+    if (!id) {
       navigate('/company');
     }
-    if(!cartesi.isConnected()){
+    if (!cartesi.isConnected()) {
       navigate('/company');
     }
   }, []);
 
+  const toggleAccordion = (index: number) => {
+    setActiveIndex(activeIndex === index ? null : index);
+  };
+
   return (
     <div className="background">
-      <div className="review-production-container">
-        <h2>Review Your Production Steps</h2>
-        <p className="intro-text">Welcome to the review section! Here, you can double-check the details of each production step to ensure accuracy and completeness. This is your chance to make sure everything is perfect before requesting verification and issuing the seal of quality.</p>
-        <p className="intro-text">Each production step listed below shows the essential information about the stage, including the resources used and the geographical location. Ensure that all details are accurate to reflect the sustainability and efficiency of your production process.</p>
-        {productionSteps.map((step: any, index: number) => (
-          <div key={index} className="production-step">
-            <h3>Stage {step.id}: {step.stage}</h3>
-            <p><strong>Continent:</strong> {step.continent}</p>
-            <p><strong>Input Products:</strong> {step.inputProducts}</p>
-            <p><strong>Output Products:</strong> {step.outputProducts}</p>
-            <p><strong>Start Date:</strong> {step.startDate}</p>
-            <p><strong>End Date:</strong> {step.endDate}</p>
-            <p><strong>Brief Description of the Process:</strong> {step.briefDescription}</p>
-            <p><strong>Water Usage:</strong> {step.waterUsage} liters</p>
-            <p><strong>Energy Usage:</strong> {step.energyUsage} kWh</p>
+      <h1>Review Production</h1>
+      <div className="batch-details">
+        <h2>Batch Details</h2>
+        <p>ID: {id.id}</p>
+        <p>Number of SKUs: {batch.n_skus}</p>
+      </div>
+      <div className="steps">
+        <h2>Steps</h2>
+        {batch.steps.map((step: any, index: number) => (
+          <div key={index} className="step">
+            <div className="accordion-header" onClick={() => toggleAccordion(index)}>
+              <h3>{step.name}</h3>
+            </div>
+            {activeIndex === index && (
+              <div className="accordion-content">
+                <p>Initial Date: {step.initial_date}</p>
+                <p>Final Date: {step.final_date}</p>
+                {step.farmer && <p>Farmer: {step.farmer}</p>}
+                {step.community && <p>Community: {step.community}</p>}
+                {step.municipality && <p>Municipality: {step.municipality}</p>}
+                {step.material && <p>Material: {step.material}</p>}
+                {step.weight_kg && <p>Weight (kg): {step.weight_kg}</p>}
+                {step.comments && <p>Comments: {step.comments}</p>}
+                {step.avarage_farm_area_ha && <p>Average Farm Area (ha): {step.avarage_farm_area_ha}</p>}
+                {step.ref_doc_link && <p>Document: <a href={step.ref_doc_link} target="_blank" rel="noopener noreferrer">Link</a></p>}
+                {step.industry && <p>Industry: {step.industry}</p>}
+                {step.designer && <p>Designer: {step.designer}</p>}
+                {step.doc_link && <p>Document: <a href={step.doc_link} target="_blank" rel="noopener noreferrer">Link</a></p>}
+              </div>
+            )}
           </div>
         ))}
-        <div className="sku-total">
-          <p><strong>Total Number of SKUs:</strong> {numberOfSKUs}</p>
-        </div>
-        <p className="final-text">Once you are satisfied with the information provided, click the button below to finalize and request verification. This step is crucial for ensuring the transparency and traceability of your production process.</p>
-        <button onClick={handleVerificationRequest} className="verification-button">Finish and Request Verification</button>
       </div>
+      <button onClick={handleVerificationRequest}>Request Verification</button>
       <ToastContainer />
     </div>
   );
