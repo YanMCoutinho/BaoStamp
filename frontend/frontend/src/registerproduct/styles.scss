@@ -1,8 +1,5 @@
 @import '../style/global.scss';
 
-.background {
-    background: url('../assets/back.png') no-repeat center center
-}
 
 .wallet{
     margin-bottom: 1.5rem;
@@ -11,7 +8,7 @@
 
 .register-product-container {
     margin: auto;
-    margin-top: 4rem;
+    margin-top: 8rem;
     margin-bottom: 4rem;
     display: flex;
     flex-direction: column;

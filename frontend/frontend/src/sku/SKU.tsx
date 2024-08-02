@@ -4,6 +4,7 @@ import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import Loading from '../loading/Loading';
+import Header from '../header/Header';
 
 const cartesi = new Cartesi();
 
@@ -72,6 +73,7 @@ export default function SKU() {
 
   return (
     <div className='background'>
+      <Header />
       <div className="sku-container">
         <h1>Visualize a Product</h1>
         {

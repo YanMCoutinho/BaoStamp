@@ -5,6 +5,7 @@ import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
+import Header from '../header/Header';
 
 const cartesi = new Cartesi();
 
@@ -59,6 +60,7 @@ const ReviewProduction = () => {
 
   return (
     <div className="background">
+      < Header />
       <h1>Review Production</h1>
       <div className="batch-details">
         <h2>Batch Details</h2>

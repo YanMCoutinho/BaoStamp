@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import './style.scss';
+import Header from '../header/Header';
+
+
 const cartesi = new Cartesi();
 // Define the Product type
 interface Product {
@@ -82,6 +85,7 @@ const Company: React.FC = () => {
   };
   return (
       <div className="company-container">
+        < Header />
         <h1>{`${companyName} Dashboard`}</h1>
         <p>This is a dashboard for adding products and visualizing the flow of product batches within the company.</p>
         <div className='products-section'>
