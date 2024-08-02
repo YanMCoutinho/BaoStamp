@@ -139,48 +139,7 @@ def production_input(rollup: Rollup, data: RollupData) -> bool:
         rollup.report("0x" + str(msg).encode('utf-8').hex())
         return False
 
-    water_usage = 0
-    energy_usage = 0
-    try:
-        steps = []
-        steps_outputs = ''
-        steps_inputs = ''
-
-        for step in payload['data']['steps']:
-            steps.append({
-                "id": step['id'],
-                "stage": step['stage'],
-                "continent": step['continent'],
-                "inputProducts": step['inputProducts'],
-                "outputProducts": step['outputProducts'],
-                "startDate": step['startDate'],
-                "endDate": step['endDate'],
-                "briefDescription": step['briefDescription'],
-                "waterUsage": step['waterUsage'],
-                "energyUsage": step['energyUsage'],
-            })
-            water_usage += float(step['waterUsage'])
-            energy_usage += float(step['energyUsage'])
-
-            if steps_outputs == '':
-                steps_outputs = step['outputProducts'].split(',')
-                steps_outputs = ''.join(sorted(steps_outputs)).lower()
-                continue
-
-            steps_inputs = ''.join(sorted(step['inputProducts'].split(','))).lower()
-
-            matcher = SequenceMatcher(None, steps_outputs, steps_inputs)
-            similarity = matcher.ratio()
-            
-            if similarity <= 0.6:
-                msg = "The output of the previous step is different from the input of the next step"
-                rollup.report("0x" + str(msg).encode('utf-8').hex())
-                return False
-        
-    except Exception as e:
-        msg = "There are missing values in the steps field or they are incorrect. Error: " + str(e)
-        rollup.report("0x" + str(msg).encode('utf-8').hex())
-        return False
+    steps = payload['data']['steps']
 
     new_production =  {
         "id": len(productions[msg_sender]),
