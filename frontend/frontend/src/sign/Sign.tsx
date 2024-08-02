@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import './style.scss';
 import 'react-toastify/dist/ReactToastify.css';
+import Header from '../header/Header';
 
 const cartesi = new Cartesi();
 
@@ -53,6 +54,7 @@ export default function Sign() {
 
     return (
         <div className="container">
+            < Header />
             <div className="form">
                 <h1>Sign</h1>
                 <form>

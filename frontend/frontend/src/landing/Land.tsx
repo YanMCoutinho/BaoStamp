@@ -1,6 +1,5 @@
 import './style.scss';
 import React from 'react';
-import BaoStampLogo from '../assets/BaoStampLogo.svg';
 import Header from '../header/Header';
 
 export default function Intro() {

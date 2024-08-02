@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './styles.scss';
 //pegar wallets conectadas no metamask
 import configFile from "../config.json";
-import {Cartesi} from '../ConnectionService';
+import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Header from '../header/Header';
+
 
 const config: any = configFile;
 
@@ -76,7 +78,7 @@ export default function RegisterProduct() {
         const newInput = JSON.stringify({ type: 0, data: newProduct });
 
         const sendInput = await cartesi.sendInputBox(newInput);
-        if(sendInput){
+        if (sendInput) {
             toast.success('Product registered successfully');
             setTimeout(() => {
                 window.location.href = '/company';
@@ -86,70 +88,73 @@ export default function RegisterProduct() {
 
     useEffect(() => {
         const isConnected = cartesi.isConnected();
-        if(!isConnected){
+        if (!isConnected) {
             cartesi.connectWallet()
         }
     }, [])
 
     return (
+        <div>
+            < Header />
             <div>
-            <div className='register-product-container'>
-                <h2>Register New Product</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="name">Product Name:</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={newProduct.name}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="description">Product Description:</label>
-                        <input
-                            type="text"
-                            id="description"
-                            name="description"
-                            value={newProduct.description}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="components">Select Components:</label>
-                        <select
-                            id="components"
-                            multiple={true}
-                            value={newProduct.components}
-                            onChange={handleComponentChange}
-                        >
-                            {Object.keys(componentOptions).map(key => (
-                                <option key={key} value={key}>{componentOptions[key]}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className='custom-component-container'>
-                        <input
-                            type="text"
-                            placeholder="Add custom component"
-                            value={customComponent}
-                            onChange={(e) => setCustomComponent(e.target.value)}
-                        />
-                        <button type="button" onClick={handleAddCustomComponent}>Add Component</button>
-                    </div>
-                    <div className="selected-components">
-                        <h3>Selected Components:</h3>
-                        <ul>
-                            {selectedComponents.map(key => (
-                                <li key={key}>{componentOptions[key]}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    <button type="submit" className="submit-button">Register Product</button>
-                </form>
+                <div className='register-product-container'>
+                    <h2>Register New Product </h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="name">Product Name:</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={newProduct.name}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="description">Product Description:</label>
+                            <input
+                                type="text"
+                                id="description"
+                                name="description"
+                                value={newProduct.description}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="components">Select Components:</label>
+                            <select
+                                id="components"
+                                multiple={true}
+                                value={newProduct.components}
+                                onChange={handleComponentChange}
+                            >
+                                {Object.keys(componentOptions).map(key => (
+                                    <option key={key} value={key}>{componentOptions[key]}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className='custom-component-container'>
+                            <input
+                                type="text"
+                                placeholder="Add custom component"
+                                value={customComponent}
+                                onChange={(e) => setCustomComponent(e.target.value)}
+                            />
+                            <button type="button" onClick={handleAddCustomComponent}>Add Component</button>
+                        </div>
+                        <div className="selected-components">
+                            <h3>Selected Components:</h3>
+                            <ul>
+                                {selectedComponents.map(key => (
+                                    <li key={key}>{componentOptions[key]}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        <button type="submit" className="submit-button">Register Product</button>
+                    </form>
+                </div>
             </div>
             <ToastContainer />
         </div>

@@ -3,6 +3,7 @@ import { Cartesi } from '../ConnectionService';
 import './style.scss';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Header from '../header/Header';
 
 const cartesi = new Cartesi();
 
@@ -33,6 +34,7 @@ export default function SetPerfil() {
 
     return (
         <div className="set-perfil-container">
+            < Header />
             <h1>Select Your Role</h1>
             <div className="options">
                 <div className="option" onClick={handleCompanyClick}>
