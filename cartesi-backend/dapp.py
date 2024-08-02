@@ -319,7 +319,8 @@ def get_productions_from_a_product(rollup: Rollup, params: URLParameters) -> boo
     msg_sender = params.path_params.get('address', "").lower()
     id = int(params.path_params.get('product_id', 0))
     production_id = int(params.path_params.get('production_id', 0))
-    all_productions = productions.get(msg_sender, {}).get(id, [])
+    one_productions = productions.get(msg_sender, {})
+    all_productions = one_productions.get(str(id), [])
 
     print(id)
     print(production_id)
