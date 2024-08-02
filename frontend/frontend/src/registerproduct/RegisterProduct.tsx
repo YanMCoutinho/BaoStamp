@@ -92,7 +92,7 @@ export default function RegisterProduct() {
     }, [])
 
     return (
-            <div className='background'>
+            <div>
             <div className='register-product-container'>
                 <h2>Register New Product</h2>
                 <form onSubmit={handleSubmit}>

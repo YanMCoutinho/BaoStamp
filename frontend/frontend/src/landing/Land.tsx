@@ -5,17 +5,17 @@ import Header from '../header/Header';
 
 export default function Intro() {
     return (
-        <div className='background'>
+        <div>
             <div className="App">
                 < Header />
                  <section className="hero">
                     <div className="container">
                         <div>
                             <h1 className="container-text">Welcome to</h1>
-                            <h1 className="container-bao">BaoStamp</h1>
+                            <h1 className="container-bao">Y-Open Data</h1>
                         </div>
                         <p className="container-p">An internacional seal of transparency and sustentability in the textile industry's production chain</p>
-                        <a href='/setperfil'><button>Enter and change the world!</button></a>
+                        <a href='/setperfil'><button>Join the revolution</button></a>
                     </div>
                 </section>
                 <section className="divider">
