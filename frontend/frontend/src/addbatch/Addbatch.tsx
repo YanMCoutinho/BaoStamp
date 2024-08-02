@@ -13,8 +13,8 @@ interface ProductionStep {
     startDate: string;
     endDate: string;
     briefDescription: string;
-    waterUsage: string;
-    energyUsage: string;
+    waterUsage: number;
+    energyUsage: number;
 }
 
 interface Batch {
@@ -47,7 +47,7 @@ export default function AddBatch() {
         }
     };
 
-    const handleInputChange = (index: number, field: keyof ProductionStep, value) => {
+    const handleInputChange = (index: number, field: keyof ProductionStep, value: any) => {
         const newSteps = productionSteps.map((step, i) => {
             if (i === index) {
                 return { ...step, [field]: value };
