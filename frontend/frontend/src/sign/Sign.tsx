@@ -1,5 +1,5 @@
 import connect from '@web3-onboard/core/dist/connect';
-import { Cartesi } from '../ConnectionService';
+import { Cartesi } from '../utils/ConnectionService';
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import './style.scss';

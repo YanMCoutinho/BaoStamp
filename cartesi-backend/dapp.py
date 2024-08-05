@@ -133,6 +133,8 @@ def production_input(rollup: Rollup, data: RollupData) -> bool:
         msg = "The production id does not exist in the user's products list"
         rollup.report("0x" + str(msg).encode('utf-8').hex())
         return False
+    
+    payload['data']['id'] = int(payload['data']['id'])
 
     if len(payload['data']['steps']) != 3:
         msg = "The number of steps is different from 3"
@@ -143,10 +145,11 @@ def production_input(rollup: Rollup, data: RollupData) -> bool:
 
     new_production =  {
         "id": len(productions[msg_sender]),
-        "product_id": payload['data']['id'],
+        "input_index": data.metadata.input_index,
+        "product_id": int(payload['data']['id']),
         "token_id": token_id,
         "steps": steps,
-        "n_skus": payload['data']['n_skus'],
+        "n_skus": int(payload['data']['n_skus']),
     }
 
     """
@@ -190,6 +193,7 @@ User Input
 @json_router.advance({"type": 2}) #create an user
 def user_input(rollup: Rollup, data: RollupData) -> bool:
     payload = data.json_payload()
+    
     msg_sender = str(data.metadata.msg_sender).lower()
 
     if products.get(msg_sender, 0) != 0:
@@ -320,17 +324,15 @@ def get_productions_from_a_product(rollup: Rollup, params: URLParameters) -> boo
     id = int(params.path_params.get('product_id', 0))
     production_id = int(params.path_params.get('production_id', 0))
     one_productions = productions.get(msg_sender, {})
-    all_productions = one_productions.get(str(id), [])
-
-    print(id)
-    print(production_id)
-    print(productions.get(msg_sender, {}))
-    print(all_productions)
+    all_productions = one_productions.get(id, -1)
+    if all_productions == -1:
+        all_productions = one_productions.get(str(id), [])
 
     if len(all_productions) <= production_id :
         msg = "{" + "'id': {}, 'product_id': {}, 'token_id': -1, 'steps': [], 'n_skus': 0".format(production_id, id) + "}"
         rollup.report('0x' + msg.encode('utf-8').hex())
         return False
+    
     requested_production = str(all_productions[production_id])
     rollup.report('0x' + requested_production.encode('utf-8').hex())
     return True
