@@ -1,10 +1,11 @@
 import './style.scss';
 import React, { useState, useEffect } from 'react';
-import { Cartesi } from '../ConnectionService';
+import { Cartesi } from '../utils/ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import Loading from '../loading/Loading';
 import Header from '../header/Header';
+import Voucher from '../voucher/Voucher';
 
 const cartesi = new Cartesi();
 
@@ -14,11 +15,22 @@ export default function SKU() {
   const [product, setProduct] = useState({
     name: "name",
     description: "description",
+    input_index: 0,
     steps: [],
     n_skus: 0
   });
 
   const [openDetails, setOpenDetails] = useState<number | null>(null);
+
+  const executeVoucher = async () => {
+    const response = await cartesi.executeVoucher(0, product.input_index);
+
+    if (response && response.error) {
+      toast.error('Erro ao tentar executar o voucher');
+    } else {
+      toast.success('Voucher executado com sucesso');
+    }
+  }
 
   useEffect(() => {
     const getProduct = async () => {
@@ -38,7 +50,7 @@ export default function SKU() {
         }
 
         let production_string = await cartesi.getInspectClient(`production/${address}/${product_id}/${production_id}`);
-        let production = { steps: [], n_skus: 0 };
+        let production = { steps: [], n_skus: 0, input_index: 0 };
         if (typeof production_string === 'string') {
           console.log('production is a string');
           try {
@@ -56,7 +68,8 @@ export default function SKU() {
           "name": base_product.name,
           "description": base_product.description,
           "steps": production.steps,
-          "n_skus": production.n_skus
+          "n_skus": production.n_skus,
+          "input_index": production.input_index
         }
 
         setProduct(requestedProduct);
@@ -190,9 +203,10 @@ export default function SKU() {
 
         }
 
-        <a href="http://localhost:8080/explorer/inputs">
+        <a href={`http://localhost:8080/explorer/inputs?query=${product.input_index}`}>
           <button className="button">Confira a transação na blockchain</button>
         </a>
+        <button className="button" onClick={executeVoucher}>Crie a NFT</button>
       </div>
       <ToastContainer />
     </div>
