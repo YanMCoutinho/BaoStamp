@@ -3,6 +3,7 @@ import { Cartesi } from '../ConnectionService';
 import './style.scss';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Header from '../header/Header';
 
 const cartesi = new Cartesi();
 
@@ -16,12 +17,25 @@ export default function SetPerfil() {
             setIsConnecting(true);
             try {
                 const account = await cartesi.connectWallet();
+                
                 if(account){
-                    toast.success('Connected to wallet');
-                    //esperar 3 segundos para redirecionar
-                    setTimeout(() => {
-                        window.location.href = '/company';
-                    }, 3000);
+                    let isUser = await cartesi.isUserSigned();
+                    if(isUser){
+                        toast.success('Connected to wallet');
+                        //esperar 3 segundos para redirecionar
+                        setTimeout(() => {
+                            window.location.href = '/company';
+                            console.log('redirecting to company');
+                        }, 3000);
+                    }else{
+                        setIsConnecting(false);
+                        toast.error('User not signed');
+                        setTimeout(() => {
+                            console.log('redirecting to sign');
+                            window.location.href = '/sign';
+                        }
+                        , 3000);
+                    }
                 }else{
                     setIsConnecting(false);
                 }
@@ -33,6 +47,7 @@ export default function SetPerfil() {
 
     return (
         <div className="set-perfil-container">
+            < Header />
             <h1>Select Your Role</h1>
             <div className="options">
                 <div className="option" onClick={handleCompanyClick}>

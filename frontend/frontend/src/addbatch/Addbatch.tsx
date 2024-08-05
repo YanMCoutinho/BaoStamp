@@ -33,7 +33,7 @@ export default function AddBatch() {
     const [n_skus, setNSKUs] = useState<number>(0);
     const id = useParams()
 
-    const handleAddStep = () => {
+    const handleAddStep:any = () => {
         if (steps.length < 3) {
             setSteps([...steps, {
                 name: '',
@@ -75,13 +75,16 @@ export default function AddBatch() {
                         <h3>Step {index + 1}</h3>
                         <div className="form-group">
                             <label htmlFor={`name-${index}`}>Step Name:</label>
-                            <input
-                                type="text"
+                            <select
                                 id={`name-${index}`}
-                                placeholder="Enter the step name"
                                 value={step.name}
                                 onChange={(e) => handleInputChange(index, 'name', e.target.value)}
-                            />
+                                >
+                                <option value="">Select a step</option>
+                                <option value="Harvest">Harvest</option>
+                                <option value="Industry">Industry</option>
+                                <option value="Design">Design</option>
+                            </select>
                         </div>
                         <div className="form-group">
                             <label htmlFor={`initial-date-${index}`}>Initial Date:</label>

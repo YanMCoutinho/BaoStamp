@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
+import { ethers } from "ethers";
 import './style.scss';
+import Header from '../header/Header';
+
+
 const cartesi = new Cartesi();
 // Define the Product type
 interface Product {
@@ -16,6 +20,7 @@ const Company: React.FC = () => {
   const [companyName, setCompanyName] = useState('Company');
   const [products, setProducts] = useState<Product[]>([]);
   const [tokensList, setTokensList] = useState<string[]>([]);
+  const [urls, setUrls] = useState<any[]>([]);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -36,6 +41,7 @@ const Company: React.FC = () => {
         // Ensure response is an array and contains Product objects
         if (Array.isArray(response)) {
           setProducts(response as Product[]);
+          
         } else {
           console.error("Expected an array but got:", response);
         }
@@ -82,6 +88,7 @@ const Company: React.FC = () => {
   };
   return (
       <div className="company-container">
+        < Header />
         <h1>{`${companyName} Dashboard`}</h1>
         <p>This is a dashboard for adding products and visualizing the flow of product batches within the company.</p>
         <div className='products-section'>

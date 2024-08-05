@@ -5,6 +5,7 @@ import { Cartesi } from '../ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
+import Header from '../header/Header';
 
 const cartesi = new Cartesi();
 
@@ -36,7 +37,7 @@ const ReviewProduction = () => {
       console.log("Input sent");
       toast.success('Batch added successfully');
       setTimeout(() => {
-        navigate('/company');
+        navigate('/sku/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0/0');
       }, 2000);
     } else {
       toast.error('Error adding batch');
@@ -59,6 +60,7 @@ const ReviewProduction = () => {
 
   return (
     <div className="background">
+      < Header />
       <h1>Review Production</h1>
       <div className="batch-details">
         <h2>Batch Details</h2>
