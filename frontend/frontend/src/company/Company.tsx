@@ -41,7 +41,6 @@ const Company: React.FC = () => {
         // Ensure response is an array and contains Product objects
         if (Array.isArray(response)) {
           setProducts(response as Product[]);
-          
         } else {
           console.error("Expected an array but got:", response);
         }
