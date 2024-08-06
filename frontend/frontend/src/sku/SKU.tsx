@@ -11,7 +11,7 @@ const cartesi = new Cartesi();
 
 export default function SKU() {
   const { address, product_id, production_id } = useParams();
-
+  
   const [product, setProduct] = useState({
     name: "name",
     description: "description",
@@ -19,6 +19,8 @@ export default function SKU() {
     steps: [],
     n_skus: 0
   });
+
+  const [userAddress, setUserAddress] = useState("0x0");
 
   const [openDetails, setOpenDetails] = useState<number | null>(null);
 
@@ -80,8 +82,13 @@ export default function SKU() {
       }
 
     };
-    getProduct();
 
+    const getUserAddress = async () => {
+      const address = String(await cartesi.signer?.getAddress())
+      setUserAddress(address);
+    }
+    getUserAddress();
+    getProduct();
   }, []);
 
   return (
@@ -206,7 +213,11 @@ export default function SKU() {
         <a href={`http://localhost:8080/explorer/inputs?query=${product.input_index}`}>
           <button className="button">Confira a transação na blockchain</button>
         </a>
-        <button className="button" onClick={executeVoucher}>Crie a NFT</button>
+        { 
+          String(userAddress) == String(address) ? 
+          <button className="button" onClick={executeVoucher}>Crie a NFT</button> : 
+          <></>
+        }
       </div>
       <ToastContainer />
     </div>
