@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import './style.scss';
 import { useWallet } from "../WalletContext";
-import { Cartesi } from '../ConnectionService';
+import { Cartesi } from '../utils/ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';

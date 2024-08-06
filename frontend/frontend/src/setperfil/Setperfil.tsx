@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cartesi } from '../ConnectionService';
+import { Cartesi } from '../utils/ConnectionService';
 import './style.scss';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

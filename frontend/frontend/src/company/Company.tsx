@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Cartesi } from '../ConnectionService';
+import { Cartesi } from '../utils/ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import { ethers } from "ethers";
 import './style.scss';
