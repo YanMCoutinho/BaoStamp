@@ -84,8 +84,8 @@ export default function SKU() {
     };
 
     const getUserAddress = async () => {
-      const address = String(await cartesi.signer?.getAddress())
-      setUserAddress(address);
+      const _address = String(await cartesi.signer?.getAddress()).trim().toLowerCase();
+      setUserAddress(_address);
     }
     getUserAddress();
     getProduct();
@@ -214,7 +214,7 @@ export default function SKU() {
           <button className="button">Confira a transação na blockchain</button>
         </a>
         { 
-          String(userAddress) == String(address) ? 
+          String(address).trim().toLowerCase() == String(userAddress).trim().toLowerCase() ? 
           <button className="button" onClick={executeVoucher}>Crie a NFT</button> : 
           <></>
         }
