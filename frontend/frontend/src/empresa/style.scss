@@ -1,0 +1,79 @@
+@import '../style/global.scss';
+
+.empresa {
+    margin-top: 80px;
+    .empresa-container {
+        margin-bottom: 20px;
+
+        .empresa-title {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+
+            &:hover {
+                color: --primary;
+            }
+        }
+
+        .empresa-details {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+
+            p {
+                margin: 5px 0;
+            }
+        }
+    }
+
+    .products {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .product {
+            flex: 1 1 calc(33.333% - 10px);
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+
+            &:hover {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            a{
+                text-decoration: none;
+                color: #000;
+            }
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+
+        button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            }
+        }
+    }
+}

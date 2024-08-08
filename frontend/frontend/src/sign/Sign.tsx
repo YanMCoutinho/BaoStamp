@@ -6,8 +6,6 @@ import './style.scss';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from '../header/Header';
 
-const cartesi = new Cartesi();
-
 export default function Sign() {
     const [connected, setConnected] = useState(false);
     const [user, setUser] = useState({
@@ -23,9 +21,18 @@ export default function Sign() {
         situation: "N/A"
     });
 
+    let cartesi: Cartesi | null = null;
+
+  try {
+    cartesi = new Cartesi();
+  } catch (error) {
+    console.error("Error initializing Cartesi:", error);
+    toast.error('Error initializing Cartesi');
+  }
+
     useEffect(() => {
-        if (!cartesi.isConnected()) {
-            cartesi.connectWallet().then(() => {
+        if (!cartesi?.isConnected()) {
+            cartesi?.connectWallet().then(() => {
                 setConnected(true);
             }
             );
@@ -43,7 +50,7 @@ export default function Sign() {
             toast.error("Connect your wallet first");
             return;
         }
-        const signNewUser = await cartesi.sign(user);
+        const signNewUser = await cartesi?.sign(user);
         if (signNewUser) {
             toast.success("User signed successfully");
             window.location.href = "/home";

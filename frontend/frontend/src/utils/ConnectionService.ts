@@ -32,14 +32,20 @@ export class Cartesi {
 
 
   constructor(dapp_address: string = "0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e") {
-    this.provider = new ethers.providers.Web3Provider(window.ethereum);
-    this.config = configFile;
-    this.inputContract = this.config[Object.keys(this.config)[0]].InputBoxAddress;
-    this.erc721Contract = this.config[Object.keys(this.config)[0]].Erc721PortalAddress;
-    this.relayApp = this.config[Object.keys(this.config)[0]].RelayAppAddress;
-    this.dappAddress = dapp_address;
-    this.signer = this.provider.getSigner();
-    this.inspectURL = this.config[Object.keys(this.config)[0]].inspectAPIURL;
+
+    this.provider = null;
+    if (window.ethereum) {
+      this.provider = new ethers.providers.Web3Provider(window.ethereum);
+      this.config = configFile;
+      this.inputContract = this.config[Object.keys(this.config)[0]].InputBoxAddress;
+      this.erc721Contract = this.config[Object.keys(this.config)[0]].Erc721PortalAddress;
+      this.relayApp = this.config[Object.keys(this.config)[0]].RelayAppAddress;
+      this.dappAddress = dapp_address;
+      this.signer = this.provider.getSigner();
+      this.inspectURL = this.config[Object.keys(this.config)[0]].inspectAPIURL;
+    }else{
+      throw new Error("MetaMask is not installed");
+    }
   }
 
   async executeVoucher(voucher_index: number, input_index: number, graphqlUrl: string = "http://localhost:8080") {
@@ -47,10 +53,8 @@ export class Cartesi {
     if (voucher.proof && this.signer) {
       try {
           const tx = await executeVoucher(this.signer, this.dappAddress, voucher.input.index, voucher.index, graphqlUrl);
-          console.log("tx is:", tx);
           return {"error": false, "tx": tx, "msg": "Voucher executed"};
       } catch (e) {
-          console.log(`COULD NOT EXECUTE VOUCHER: ${JSON.stringify(e)}`);
           return {"error": true, "tx": null, "msg": "An error occurred"};
       }
     }
@@ -58,15 +62,11 @@ export class Cartesi {
 
   
   async switchChain() {
-    //pegar valor da primeira chave mas tirar os 2 primeiros caracteres
-
     const chainId = Object.keys(this.config)[0].slice(2);
-    console.log(chainId)
     if (this.provider) {
       await this.provider.send("wallet_switchEthereumChain", [
         { chainId: `0x${chainId.toString()}` },
       ]);
-      console.log(`Switched to chain ${chainId}`);
       return chainId;
     } else {
       throw new Error("No wallet is connected");
@@ -77,7 +77,6 @@ export class Cartesi {
     if (this.provider) {
       this.provider = null;
       this.signer = null;
-      console.log("Disconnected wallet");
       return true;
     } else {
       console.error("No wallet is connected");
@@ -95,11 +94,9 @@ export class Cartesi {
         await this.provider.send("eth_requestAccounts", []);
         this.signer = this.provider.getSigner();
         const address = await this.signer.getAddress();
-        console.log(`Connected wallet address: ${address}`);
         await this.switchChain();
         return true;
       } else {
-        console.log(`Already connected: ${accounts[0]}`);
         return true;
       }
     } else {
@@ -114,14 +111,11 @@ export class Cartesi {
       }
       const accounts = await this.provider.listAccounts();
       if (accounts.length === 0) {
-        console.log("No wallet is connected");
         return false;
       } else {
-        console.log(`Already connected: ${this.signer}`);
         return true;
       }
     } else {
-      console.log("No wallet is connected");
       return false;
     }
   }
@@ -139,13 +133,10 @@ export class Cartesi {
 
     async sendInputBox(value: string) {
         const payload: Uint8Array = this.string2hex(value);
-        console.log(`Sending value: ${value}`);
         try{
           if (this.signer) {
-            console.log(`Sending input with account ${await this.signer.getAddress()}`)
               const inputContract = InputBox__factory.connect(this.inputContract, this.signer);
               await inputContract.addInput(this.dappAddress, payload);
-              console.log("Input sent");
               return true;
           }else{
               console.error("No wallet is connected");
@@ -196,13 +187,10 @@ export class Cartesi {
     }
 
     async sign(user: User){
-      console.log("Signing user");
       const newUserInput = {"type":2, data: user};
       const payload = JSON.stringify(newUserInput);
-      console.log(`Sending value: ${JSON.stringify(newUserInput)}`);
       try{
         if(this.signer){
-          console.log(`Signing with account ${await this.signer.getAddress()}`)
           const sendInput = await this.sendInputBox(payload);
           if(sendInput){
             return true;
@@ -223,12 +211,9 @@ export class Cartesi {
     async isUserSigned(){
       try{
         const account = await this.signer?.getAddress();
-        console.log(`Fetching user data for account ${account}`);
         const response = await fetch(`${this.inspectURL}/inspect/users`);
         const data = await response.json();
-        console.log(data);
         let payload = JSON.parse(this.hex2string(data.reports[0].payload).replace(/'/g, '"'));
-        console.log(payload);
         //verificar se account está na lista de usuários
         if(account){
           if(payload.includes(account.toLowerCase())){
@@ -247,5 +232,94 @@ export class Cartesi {
       }
     }
 
+    async getCompanies(){
+      try{
+        const response = await fetch(`${this.inspectURL}/inspect/users`);
+        const data = await response.json();
+        let payload = JSON.parse(this.hex2string(data.reports[0].payload).replace(/'/g, '"'));
+        return payload;
+      }catch(error){
+        console.error("Error fetching companies: ",error);
+        return false;
+      }
+    }
 
+    async getCompaniesData() {
+      try {
+          const companiesAddress = await this.getCompanies();
+          let companiesData = [];
+          for (const company of companiesAddress) {
+              const response = await fetch(`${this.inspectURL}/inspect/user/${company}`);
+              const data = await response.json();
+  
+              let payloadString = ethers.utils.toUtf8String(data.reports[0].payload);
+  
+              // Substituir aspas simples por aspas duplas
+              let jsonString = payloadString.replace(/'/g, '"').replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false');
+  
+              let payload;
+              try {
+                  payload = JSON.parse(jsonString);
+              } catch (e:any) {
+                  console.error("Erro ao parsear JSON:", e.message, "Payload string:", jsonString);
+                  throw new Error("Erro ao parsear JSON: " + e.message);
+              }
+              companiesData.push({payload});
+          }
+          return companiesData;
+      } catch (error) {
+          console.error("Erro ao buscar dados das empresas:", error);
+          throw new Error("Error fetching companies data: " + error);
+      }
+  }  
+  
+  async getCompanyData(companyAddress: string) {
+    try {
+        const response = await fetch(`${this.inspectURL}/inspect/user/${companyAddress}`);
+        const data = await response.json();
+
+        let payloadString = ethers.utils.toUtf8String(data.reports[0].payload);
+
+        // Substituir aspas simples por aspas duplas
+        let jsonString = payloadString.replace(/'/g, '"').replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false');
+
+        let payload;
+        try {
+            payload = JSON.parse(jsonString);
+        } catch (e:any) {
+            console.error("Erro ao parsear JSON:", e.message, "Payload string:", jsonString);
+            throw new Error("Erro ao parsear JSON: " + e.message);
+        }
+        return payload;
+    } catch (error) {
+        console.error("Erro ao buscar dados da empresa:", error);
+        throw new Error("Error fetching company data: " + error);
+    }
+  }
+
+  async getProduct(address:string, product_id:string){
+    try{
+      const response = await fetch(`${this.inspectURL}/inspect/productions/${address}/${product_id}`);
+      const data = await response.json();
+      let payload = JSON.parse(this.hex2string(data.reports[0].payload).replace(/'/g, '"'));
+      return payload;
+    }catch(error){
+      console.error("Error fetching product: ",error);
+      return false;
+    }
+  }
+
+  async getProducts(address: string){
+    try{
+      const response = await fetch(`${this.inspectURL}/inspect/products/${address}`);
+      const data = await response.json();
+      let payload = JSON.parse(this.hex2string(data.reports[0].payload).replace(/'/g, '"'));
+      return payload;
+    }catch(error){
+      console.error("Error fetching products: ",error);
+      return false;
+    }
+  }
+  
 }
+

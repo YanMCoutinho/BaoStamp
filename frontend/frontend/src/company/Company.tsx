@@ -6,8 +6,6 @@ import { ethers } from "ethers";
 import './style.scss';
 import Header from '../header/Header';
 
-
-const cartesi = new Cartesi();
 // Define the Product type
 interface Product {
   id: string;
@@ -21,10 +19,20 @@ const Company: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [tokensList, setTokensList] = useState<string[]>([]);
   const [urls, setUrls] = useState<any[]>([]);
+
+  let cartesi: Cartesi | null = null;
+
+  try {
+    cartesi = new Cartesi();
+  } catch (error) {
+    console.error("Error initializing Cartesi:", error);
+    toast.error('Error initializing Cartesi');
+  }
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        let response = await cartesi.getInspect('products');
+        let response = await cartesi?.getInspect('products');
         if (typeof response === 'string') {
           console.log('response is a string');
           try{
@@ -44,7 +52,7 @@ const Company: React.FC = () => {
         } else {
           console.error("Expected an array but got:", response);
         }
-        let tokens = await cartesi.getInspect('tokens').then((response) => {
+        let tokens = await cartesi?.getInspect('tokens').then((response) => {
           if (typeof response === 'string') {
             try{
               response = response.replace(/'/g, '"');

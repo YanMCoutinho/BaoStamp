@@ -7,13 +7,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
 import Header from '../header/Header';
 
-const cartesi = new Cartesi();
-
 const ReviewProduction = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { batch, id } = location.state;
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  let cartesi: Cartesi | null = null;
+
+  try {
+    cartesi = new Cartesi();
+  } catch (error) {
+    console.error("Error initializing Cartesi:", error);
+    toast.error('Error initializing Cartesi');
+  }
 
   // Enviar solicitação de verificação backend
   const handleVerificationRequest = async () => {
@@ -31,7 +38,7 @@ const ReviewProduction = () => {
 
     console.log(reqJsonStr);
 
-    const input = await cartesi.sendInputBox(reqJsonStr);
+    const input = await cartesi?.sendInputBox(reqJsonStr);
 
     if (input) {
       console.log("Input sent");
@@ -49,7 +56,7 @@ const ReviewProduction = () => {
     if (!id) {
       navigate('/company');
     }
-    if (!cartesi.isConnected()) {
+    if (!cartesi?.isConnected()) {
       navigate('/company');
     }
   }, []);

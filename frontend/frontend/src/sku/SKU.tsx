@@ -7,10 +7,19 @@ import Loading from '../loading/Loading';
 import Header from '../header/Header';
 import Voucher from '../voucher/Voucher';
 
-const cartesi = new Cartesi();
+
 
 export default function SKU() {
   const { address, product_id, production_id } = useParams();
+
+  let cartesi: Cartesi | null = null;
+
+  try {
+    cartesi = new Cartesi();
+  } catch (error) {
+    console.error("Error initializing Cartesi:", error);
+    toast.error('Error initializing Cartesi');
+  }
   
   const [product, setProduct] = useState({
     name: "name",
@@ -25,7 +34,7 @@ export default function SKU() {
   const [openDetails, setOpenDetails] = useState<number | null>(null);
 
   const executeVoucher = async () => {
-    const response = await cartesi.executeVoucher(0, product.input_index);
+    const response = await cartesi?.executeVoucher(0, product.input_index);
 
     if (response && response.error) {
       toast.error('Erro ao tentar executar o voucher');
@@ -37,7 +46,7 @@ export default function SKU() {
   useEffect(() => {
     const getProduct = async () => {
       try {
-        let product_string = await cartesi.getInspectClient(`products/${address}/${product_id}`);
+        let product_string = await cartesi?.getInspectClient(`products/${address}/${product_id}`);
         let base_product = { name: "name", description: "description" };
         if (typeof product_string === 'string') {
           console.log('product is a string');
@@ -51,7 +60,7 @@ export default function SKU() {
           }
         }
 
-        let production_string = await cartesi.getInspectClient(`production/${address}/${product_id}/${production_id}`);
+        let production_string = await cartesi?.getInspectClient(`production/${address}/${product_id}/${production_id}`);
         let production = { steps: [], n_skus: 0, input_index: 0 };
         if (typeof production_string === 'string') {
           console.log('production is a string');
@@ -84,7 +93,7 @@ export default function SKU() {
     };
 
     const getUserAddress = async () => {
-      const _address = String(await cartesi.signer?.getAddress()).trim().toLowerCase();
+      const _address = String(await cartesi?.signer?.getAddress()).trim().toLowerCase();
       setUserAddress(_address);
     }
     getUserAddress();

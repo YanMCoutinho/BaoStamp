@@ -5,10 +5,17 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from '../header/Header';
 
-const cartesi = new Cartesi();
-
 export default function SetPerfil() {
     const [isConnecting, setIsConnecting] = useState(false);
+
+    let cartesi: Cartesi | null = null;
+
+  try {
+    cartesi = new Cartesi();
+  } catch (error) {
+    console.error("Error initializing Cartesi:", error);
+    toast.error('Error initializing Cartesi');
+  }
 
     async function handleCompanyClick() {
     console.log('handleCompanyClick');
@@ -16,10 +23,10 @@ export default function SetPerfil() {
         if (!isConnecting) {
             setIsConnecting(true);
             try {
-                const account = await cartesi.connectWallet();
+                const account = await cartesi?.connectWallet();
                 
                 if(account){
-                    let isUser = await cartesi.isUserSigned();
+                    let isUser = await cartesi?.isUserSigned();
                     if(isUser){
                         toast.success('Connected to wallet');
                         //esperar 3 segundos para redirecionar
@@ -60,7 +67,7 @@ export default function SetPerfil() {
                         <li>Promote sustainability and eco-friendly practices</li>
                     </ul>
                 </div>
-                <div className="option" onClick={() => window.location.href = '/consult-sku'}>
+                <div className="option" onClick={() => window.location.href = '/costumers'}>
                     <h2>Customer</h2>
                     <p>View the supply chain of registered products</p>
                     <ul>

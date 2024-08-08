@@ -22,6 +22,9 @@ import reportWebVitals from "./reportWebVitals";
 import Company from "../src/company/Company";
 import Land from "../src/landing/Land";
 import Sign from "../src/sign/Sign";
+import Costumers from "./costumers/Costumers";
+import Empresa from "./empresa/Empresa";
+import Productions from "./productions/Productions";
 
 import { createRoot } from 'react-dom/client';
 import SKU from "./sku/SKU";
@@ -44,6 +47,9 @@ root.render(
                 <Route path="/company" element={<Company />} />
                 <Route path="/sign" element={<Sign />} />
                 <Route path="/sku/:address/:product_id/:production_id" element={<SKU />} />
+                <Route path="/costumers" element={<Costumers />} />
+                <Route path="/empresa/:address" element={<Empresa />} />
+                <Route path="/productions/:address/:product_id" element={<Productions />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>

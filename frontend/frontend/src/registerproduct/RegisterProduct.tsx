@@ -8,11 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from '../header/Header';
 
 
-const config: any = configFile;
-
-const cartesi = new Cartesi();
-
-
 interface IProduct {
     id: number;
     name: string;
@@ -42,6 +37,15 @@ export default function RegisterProduct() {
 
     const [customComponent, setCustomComponent] = useState('');
     const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
+
+    let cartesi: Cartesi | null = null;
+
+  try {
+    cartesi = new Cartesi();
+  } catch (error) {
+    console.error("Error initializing Cartesi:", error);
+    toast.error('Error initializing Cartesi');
+  }
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -77,7 +81,7 @@ export default function RegisterProduct() {
         event.preventDefault();
         const newInput = JSON.stringify({ type: 0, data: newProduct });
 
-        const sendInput = await cartesi.sendInputBox(newInput);
+        const sendInput = await cartesi?.sendInputBox(newInput);
         if (sendInput) {
             toast.success('Product registered successfully');
             setTimeout(() => {
@@ -87,9 +91,9 @@ export default function RegisterProduct() {
     };
 
     useEffect(() => {
-        const isConnected = cartesi.isConnected();
+        const isConnected = cartesi?.isConnected();
         if (!isConnected) {
-            cartesi.connectWallet()
+            cartesi?.connectWallet()
         }
     }, [])
 
