@@ -93,8 +93,12 @@ export default function SKU() {
     };
 
     const getUserAddress = async () => {
-      const _address = String(await cartesi?.signer?.getAddress()).trim().toLowerCase();
-      setUserAddress(_address);
+      try{
+        const _address = String(await cartesi?.signer?.getAddress()).trim().toLowerCase();
+        setUserAddress(_address);
+      }catch(error){
+        console.log("You are not connected to a wallet");
+      }
     }
     getUserAddress();
     getProduct();

@@ -169,7 +169,6 @@ export class Cartesi {
     }
     async getInspectClient(route:string){
       try{
-        const account = await this.signer?.getAddress();
         const response = await fetch(`${this.inspectURL}/inspect/${route}`);
 
         const data = await response.json();

@@ -70,7 +70,7 @@ const Customers: React.FC = () => {
 
         return companiesToRender.map((company, index) => (
             <tr key={index}>
-                <td>{company.corporate_name}</td>
+                <td>{company.fantasy_name}</td>
                 <td>
                     <a href={`/empresa/${company.address}`}>View Details</a>
                 </td>

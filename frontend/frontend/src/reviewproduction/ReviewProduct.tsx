@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import './style.scss';
-import { useWallet } from "../WalletContext";
 import { Cartesi } from '../utils/ConnectionService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,11 +11,21 @@ const ReviewProduction = () => {
   const navigate = useNavigate();
   const { batch, id } = location.state;
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [userAddress, setUserAddress] = useState<string | null>(null);
 
   let cartesi: Cartesi | null = null;
 
+  let address = async () =>{
+    let address = await cartesi?.signer?.getAddress();
+    if(address){
+      setUserAddress(address);
+    }
+    return address;
+  }
+
   try {
     cartesi = new Cartesi();
+    address();
   } catch (error) {
     console.error("Error initializing Cartesi:", error);
     toast.error('Error initializing Cartesi');
@@ -34,6 +43,7 @@ const ReviewProduction = () => {
       }
     };
 
+
     const reqJsonStr = JSON.stringify(reqJson);
 
     console.log(reqJsonStr);
@@ -44,7 +54,7 @@ const ReviewProduction = () => {
       console.log("Input sent");
       toast.success('Batch added successfully');
       setTimeout(() => {
-        navigate('/sku/0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/0/0');
+        navigate(`/sku/${userAddress}/0/0`);
       }, 2000);
     } else {
       toast.error('Error adding batch');
@@ -52,7 +62,8 @@ const ReviewProduction = () => {
   };
 
   useEffect(() => {
-    console.log("ReviewProduction", { batch, id });
+    console.log("ReviewProduction", { batch, id }); 
+    
     if (!id) {
       navigate('/company');
     }
