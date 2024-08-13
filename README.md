@@ -26,16 +26,11 @@ Here are all the instructions necessary for installing all the essential program
 
 1. Download and install Cartesi: [https://docs.cartesi.io](https://docs.cartesi.io) (version 1.3)
 2. Clone the repository in question.
-3. In administrator mode, open "Ubuntu" and then open the "src/cartesi-backend" folder in the root directory of the cloned repository and type the following command:
+3. In administrator mode, open "Ubuntu" and then open the "src/cartesi-backend" folder in the root directory of the cloned repository, open Docker Desktop and type the following command at the Ubuntu cmd:
 
 ```sh
-command here
-```
-
-This will install all the dependencies defined in the <b>package.json</b> file that are necessary to run the project. Now the project is ready to be modified. If you still want to start the application, type the command below in the terminal:
-
-```sh
-yarn start
+cartesi build
+cartesi run
 ```
 
 4. Now open the "frontend/frontend" folder and run the following command:
